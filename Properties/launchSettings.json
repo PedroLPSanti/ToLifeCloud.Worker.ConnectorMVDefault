@@ -1,0 +1,13 @@
+{
+  "Docker": {
+    "useSSL": false
+  },
+  "profiles": {
+    "ToLifeCloud.Worker.IntegrationMV": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+version: '2'
+services:
+  tolifecloud-worker-device:
+    image: tolife.azurecr.io/#{Branch}#-#{ComponentName}#:#{BuildID}#
+    container_name: tolifecloud-worker-connector-mv-default
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    environment:
+       - DOTNET_ENVIRONMENT=Production
+       - ticketReaderWorkerDelay=#{ticketReaderWorkerDelay}#
+       - patientTriageWorkerDelay=#{patientTriageWorkerDelay}#
+       - callTicketWorkerDelay=#{callTicketWorkerDelay}#
+       - updateConfigWorkerDelay=#{updateConfigWorkerDelay}#
+       - ticketEvasionWorkerDelay=#{ticketEvasionWorkerDelay}#
+       - ticketEvasionWorkerRun=#{ticketEvasionWorkerRun}#
+       - ticketReaderWorkerRun=#{ticketReaderWorkerRun}#
+       - patientTriageWorkerRun=#{patientTriageWorkerRun}#
+       - callTicketWorkerRun=#{callTicketWorkerRun}#
+       - updateConfigWorkerRun=#{updateConfigWorkerRun}#
+       - logKeepAliveWorkerRun=#{logKeepAliveWorkerRun}#
+       - idHealthUnit=#{idHealthUnit}#
+       - userOracle=#{userOracle}#
+       - passwordOracle=#{passwordOracle}#
+       - HostOracle=#{HostOracle}#
+       - PortOracle=#{PortOracle}#
+       - ServiceNameOracle=#{ServiceNameOracle}#
+       - HostPostgre=#{HostPostgre}#
+       - TZ=America/Sao_Paulo
+       - log=#{log}#
+       - oracleVersion=#{oracleVersion}#
