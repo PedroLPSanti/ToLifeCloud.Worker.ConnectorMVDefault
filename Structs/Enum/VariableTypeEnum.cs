@@ -3,8 +3,8 @@
     public enum VariableTypeEnum
     {
         token = 66,
-        sexo = 67,
-        cor_referencia = 68,
+        sexo = 67, //
+        cor_referencia = 68, // cd_cor_refenrecia
         sintoma_avaliacao = 69,
         classificacao = 70,
         multi_empresa = 71,
@@ -20,6 +20,10 @@
         sinal_vital_oxigenio = 81,
         sinal_vital_glicose = 82,
         sinal_vital_dor = 83,
-        avaliacao = 0
+        sinal_vital_glasgow = 84,
+        tipo_processo_inicio_classificação = 85,
+        tipo_processo_fim_classificação = 86,
+        hist_classificacao_tip = 87,
+        hist_reclassificacao_tip = 88
     }
 }

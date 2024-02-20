@@ -26,6 +26,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
         public bool ticketEvasionWorkerRun { get; set; }
         public long idHealthUnit { get; set; }
         public WorkersDelays workersDelays { get; set; }
+        public int timezone { get; set; }
     }
 
     public class WorkersDelays

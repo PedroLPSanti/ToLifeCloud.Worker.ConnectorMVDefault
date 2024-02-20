@@ -139,6 +139,17 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             return coletaSinalVital;
         }
 
+        public void CompleteColetaSinalVital(decimal cdColetaSinalVital)
+        {
+            var query = _contextDBAMV.coletaSinalVital.Where(c => c.cdColetaSinalVital == cdColetaSinalVital).FirstOrDefault();
+
+            query.snFinalizado = 'S';
+
+            _contextDBAMV.coletaSinalVital.Update(query);
+
+            _contextDBAMV.SaveChanges();
+        }
+
         public void InsertPaguAvaliacao(PaguAvaliacao paguAvaliacao)
         {
             var id = GetId("PAGU_AVALIACAO");
@@ -170,6 +181,43 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
                              tpLancamento = pwSinalVitalUnidInstrAfer.tpLancamento
                          }).FirstOrDefault();
             return query;
+        }
+
+
+        public void InsertTempoProcesso(SacrTempoProcesso sacrTempoProcesso)
+        {
+            var id = GetId("SACR_TEMPO_PROCESSO");
+
+            sacrTempoProcesso.cdTempoProcesso = id;
+
+            _contextDBAMV.sacrTempoProcesso.Add(sacrTempoProcesso);
+
+            _contextDBAMV.SaveChanges();
+        }
+
+        public decimal InsertTriagemAtendimentoHist(TriagemAtendimentoHist triagemAtendimentoHist)
+        {
+            var id = GetId("TRIAGEM_ATENDIMENTO_HIST");
+
+            triagemAtendimentoHist.cdTriagemAtendimentoHist = id;
+
+            _contextDBAMV.triagemAtendimentoHist.Add(triagemAtendimentoHist);
+
+            _contextDBAMV.SaveChanges();
+
+            return id;
+        }
+
+        public void InsertTriaAtndHisItColSinVit(decimal cdTriagemAtendimentoHist, decimal cdColetaSinalVital, decimal cdSinalVital)
+        {
+            _contextDBAMV.triaAtndHisItColSinVit.Add(new TriaAtndHisItColSinVit
+            {
+                cdTriagemAtendimentoHist = cdTriagemAtendimentoHist,
+                cdColetaSinalVital = cdColetaSinalVital,
+                cdSinalVital = cdSinalVital
+            });
+
+            _contextDBAMV.SaveChanges();
         }
     }
 }

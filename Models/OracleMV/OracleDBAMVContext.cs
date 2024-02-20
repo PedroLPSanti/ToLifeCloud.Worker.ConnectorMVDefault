@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Permissions;
 using ToLifeCloud.Worker.ConnectorMVDefault.Models.PostgreMV;
 
 namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
@@ -9,7 +10,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         {
 
             base.OnModelCreating(modelBuilder.HasDefaultSchema("DBAMV")
-                .Entity<ItColetaSinalVital>(c => c.HasKey(o => new { o.cdColetaSinalVital, o.cdSinalVital })));
+                .Entity<ItColetaSinalVital>(c => c.HasKey(o => new { o.cdColetaSinalVital, o.cdSinalVital }))
+                .Entity<TriaAtndHisItColSinVit>(c => c.HasKey(o => new { o.cdTriagemAtendimentoHist, o.cdColetaSinalVital, o.cdSinalVital })));
+
         }
 
         public OracleDBAMVContext(DbContextOptions<OracleDBAMVContext> options) : base(options)
@@ -38,5 +41,11 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public DbSet<TriagemAtendimento> triagemAtendimento { get; set; }
 
         public DbSet<PaguAvaliacao> paguAvaliacao { get; set; }
+
+        public DbSet<SacrTempoProcesso> sacrTempoProcesso { get; set; }
+
+        public DbSet<TriagemAtendimentoHist> triagemAtendimentoHist { get; set; }
+
+        public DbSet<TriaAtndHisItColSinVit> triaAtndHisItColSinVit { get; set; }
     }
 }

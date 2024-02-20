@@ -9,39 +9,39 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
     public class PaguAvaliacao
     {
         public PaguAvaliacao() { }
-        public PaguAvaliacao(TriageWebhookStruct triageWebhook, decimal cdTriagemAtendimento, ListVariableStruct variables)
+        public PaguAvaliacao(TriageWebhookStruct triageWebhook, decimal cdTriagemAtendimento, ListVariableStruct variables, VariableTypeEnum valueType, float vlResultado)
         {
-            cdFormula = 129;//de-para?
-            dhAvaliacao = triageWebhook.startClassification.Value;
+            cdFormula = variables.getVariable<decimal>(valueType);//de-para?
+            dhAvaliacao = triageWebhook.startClassification.Value.AddHours(3);
             nmUsuario = triageWebhook.userClassificationName;
-            vlResultado = 0;//triageWebhook.idPain.ToString();//de-para?
+            this.vlResultado = vlResultado;
             snExibirResultado = "S";
             this.cdTriagemAtendimento = cdTriagemAtendimento;
             cdMultiEmpresa = variables.getVariable<decimal>(VariableTypeEnum.multi_empresa);
         }
 
-        [Key, Column("cd_avaliacao")]
+        [Key, Column("CD_AVALIACAO")]
         public decimal cdAvaliacao { get; set; }
 
-        [Column("cd_formula")]
+        [Column("CD_FORMULA")]
         public decimal cdFormula { get; set; }
 
-        [Column("dh_avaliacao")]
+        [Column("DH_AVALIACAO")]
         public DateTime dhAvaliacao { get; set; }
 
-        [Column("nm_usuario")]
+        [Column("NM_USUARIO")]
         public string nmUsuario { get; set; }
 
-        [Column("vl_resultado")]
+        [Column("VL_RESULTADO")]
         public float vlResultado { get; set; }
 
-        [Column("sn_exibir_resultado")]
+        [Column("SN_EXIBIR_RESULTADO")]
         public string snExibirResultado { get; set; }
 
-        [Column("cd_triagem_atendimento")]
+        [Column("CD_TRIAGEM_ATENDIMENTO")]
         public decimal cdTriagemAtendimento { get; set; }
 
-        [Column("cd_multi_empresa")]
+        [Column("CD_MULTI_EMPRESA")]
         public decimal cdMultiEmpresa { get; set; }
     }
 }

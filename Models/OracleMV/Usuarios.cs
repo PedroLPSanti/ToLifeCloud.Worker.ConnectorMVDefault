@@ -14,5 +14,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
 
         [Column("CD_PRESTADOR")]
         public decimal cdPrestador { get; set; }
+
+        [Column("NM_USUARIO")]
+        public string nmUsuario { get; set; }
     }
 }

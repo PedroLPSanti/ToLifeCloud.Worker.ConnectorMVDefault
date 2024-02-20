@@ -6,6 +6,7 @@ using ToLifeCloud.Worker.ConnectorMVDefault.Repositories.PostgreMV;
 using ToLifeCloud.Worker.ConnectorMVDefault.Worker;
 using Microsoft.Extensions.Logging.Debug;
 using ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,7 @@ builder.Services.Configure<AppSettings>(appSettings =>
         appSettings.updateConfigWorkerRun = bool.Parse(Environment.GetEnvironmentVariable("updateConfigWorkerRun"));
         appSettings.logKeepAliveWorkerRun = bool.Parse(Environment.GetEnvironmentVariable("logKeepAliveWorkerRun"));
         appSettings.idHealthUnit = int.Parse(Environment.GetEnvironmentVariable("idHealthUnit"));
+        appSettings.timezone = int.Parse(Environment.GetEnvironmentVariable("timezone"));
         appSettings.log = bool.Parse(Environment.GetEnvironmentVariable("log"));
     }
     else

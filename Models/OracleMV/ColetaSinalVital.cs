@@ -14,9 +14,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         {
             cdPrestador = usuarios.cdPrestador;
             nmUsuario = triage.userClassificationName;
-            dataColeta = triage.startClassification.Value;
+            dataColeta = triage.startClassification.Value.AddHours(3);
             this.cdTriagemAtendimento = cdTriagemAtendimento;
-            snFinalizado = 'S';
+            snFinalizado = 'N';
             cdMultiEmpresa = variables.getVariable<decimal>(VariableTypeEnum.multi_empresa);//de-para
             snRelevante = 'S';
         }

@@ -19,28 +19,28 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
             dhClassificacaoRisco = triagemAtendimento.dhPreAtendimentoFim;
             vlEscore = 0;
         }
-        [Key, Column("cd_classificacao_risco")]
+        [Key, Column("CD_CLASSIFICACAO_RISCO")]
         public decimal cdClassificacaoRisco { get; set; }
 
-        [Column("cd_cor_referencia")]
+        [Column("CD_COR_REFERENCIA")]
         public decimal cdCorReferencia { get; set; }
 
-        [Column("cd_sintoma_avaliacao")]
+        [Column("CD_SINTOMA_AVALIACAO")]
         public decimal cdSintomaAvaliacao { get; set; }
 
-        [Column("cd_classificacao")]
+        [Column("CD_CLASSIFICACAO")]
         public decimal cdClassificacao { get; set; }
 
-        [Column("ds_observacao")]
+        [Column("DS_OBSERVACAO")]
         public string dsObservacao { get; set; }
 
-        [Column("cd_triagem_atendimento")]
+        [Column("CD_TRIAGEM_ATENDIMENTO")]
         public decimal cdTriagemAtendimento { get; set; }
 
-        [Column("dh_classificacao_risco")]
+        [Column("DH_CLASSIFICACAO_RISCO")]
         public DateTime dhClassificacaoRisco { get; set; }
 
-        [Column("vl_escore")]
+        [Column("VL_ESCORE")]
         public decimal vlEscore { get; set; }
     }
 }

@@ -73,11 +73,17 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                             throw new Exception($"CPF do user {webhookRequest.body.idUserClassification}, não cadastrado!");
                         }
 
-                        var paciente = oracleMVRepository.GetPacienteByCpf(variables.getVariable<decimal>(VariableTypeEnum.multi_empresa),
-                            webhookRequest.body.patientCpf,
-                            webhookRequest.body.patientCns);
+                        Paciente? paciente = null;
+                        if (!string.IsNullOrEmpty(webhookRequest.body.patientCpf) || !string.IsNullOrEmpty(webhookRequest.body.patientCns))
+                        {
+                            paciente = oracleMVRepository.GetPacienteByCpf(variables.getVariable<decimal>(VariableTypeEnum.multi_empresa),
+                                webhookRequest.body.patientCpf,
+                                webhookRequest.body.patientCns);
+                        }
 
                         TriagemAtendimento triagemAtendimento = new(webhookRequest.body, user, variables, paciente);
+
+                        bool isReclassification = false;
 
                         if (episodeRelation == null)
                         {
@@ -94,74 +100,118 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                         else
                         {
                             triagemAtendimento.cdTriagemAtendimento = episodeRelation.cdTriagemAtendimento;
+                            isReclassification = true;
                         }
+
+                        SacrTempoProcesso sacrTempoProcesso = new SacrTempoProcesso(triagemAtendimento.cdTriagemAtendimento, variables.getVariable<decimal>(VariableTypeEnum.tipo_processo_inicio_classificação), user.nmUsuario);
+
+                        oracleMVRepository.InsertTempoProcesso(sacrTempoProcesso);
 
                         oracleMVRepository.UpdateTriage(triagemAtendimento);
 
-                        ColetaSinalVital coletaSinal = null;
+                        ColetaSinalVital coletaSinal = oracleMVRepository.InsertColetaSinalVital(new ColetaSinalVital(webhookRequest.body, user, triagemAtendimento.cdTriagemAtendimento, variables));
+
+                        List<decimal> listSinalVital = new List<decimal>();
 
                         if (webhookRequest.body.hasVitalSigns())
                         {
-                            coletaSinal = oracleMVRepository.InsertColetaSinalVital(new ColetaSinalVital(webhookRequest.body, user, triagemAtendimento.cdTriagemAtendimento, variables));
-
                             if (webhookRequest.body.weight.HasValue)
                             {
                                 var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_peso));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
                                 oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.weight.Value));
                             }
 
                             if (webhookRequest.body.height.HasValue)
                             {
                                 var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_altura));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
                                 oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.height.Value));
                             }
 
                             if (webhookRequest.body.temperature.HasValue)
                             {
                                 var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_temperatura));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
                                 oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.temperature.Value));
                             }
 
-                            //if (webhookRequest.body.heartRate.HasValue)
-                            //{
-                            //    var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_pulso));
-                            //    oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.heartRate.Value));
-                            //}
+                            if (webhookRequest.body.heartRate.HasValue)
+                            {
+                                var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_pulso));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
+                                oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.heartRate.Value));
+                            }
 
                             if (webhookRequest.body.bloodPressureSystole.HasValue)
                             {
                                 var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_pressao_sistolica));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
                                 oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.bloodPressureSystole.Value));
                             }
 
                             if (webhookRequest.body.bloodPressureDiastole.HasValue)
                             {
                                 var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_pressao_diastolica));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
                                 oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.bloodPressureDiastole.Value));
                             }
 
                             if (webhookRequest.body.respiratoryFrequency.HasValue)
                             {
                                 var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_frequencia_respiratoria));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
                                 oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.respiratoryFrequency.Value));
                             }
 
                             if (webhookRequest.body.saturation.HasValue)
                             {
                                 var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_oxigenio));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
                                 oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.saturation.Value));
                             }
 
                             if (webhookRequest.body.idPain.HasValue)
                             {
                                 var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_dor));
-                                oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.idPain.Value));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
+                                oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, Util.GetPain(webhookRequest.body.idPain.Value)));
+                            }
+
+                            if (webhookRequest.body.glucose.HasValue)
+                            {
+                                var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_glicose));
+                                listSinalVital.Add(sinalVital.cdSinalVital);
+                                oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, webhookRequest.body.glucose.Value));
                             }
                             //falta pulso, glasgow
-                            //oracleMVRepository.InsertPaguAvaliacao(new PaguAvaliacao(webhookRequest.body, triagemAtendimento.cdTriagemAtendimento, variables));
-
-                            postgreRepository.CreateRelation(new RelationTriage(episodeRelation.idRelationEpisode, webhookRequest.body.idTriage, coletaSinal.cdColetaSinalVital));
                         }
+                        if (webhookRequest.body.glasgow.HasValue)
+                        {
+                            oracleMVRepository.InsertPaguAvaliacao(new PaguAvaliacao(webhookRequest.body, triagemAtendimento.cdTriagemAtendimento, variables, VariableTypeEnum.sinal_vital_glasgow, webhookRequest.body.glasgow.Value));
+                        }
+
+                        oracleMVRepository.InsertClassificacaoRisco(new SacrClassificacaoRisco(triagemAtendimento));
+
+                        triagemAtendimento.tpClassificacao = "COMPLETA";
+
+                        oracleMVRepository.UpdateTriage(triagemAtendimento);
+
+                        sacrTempoProcesso.cdTipoTempoProcesso = variables.getVariable<decimal>(VariableTypeEnum.tipo_processo_fim_classificação);
+
+                        oracleMVRepository.InsertTempoProcesso(sacrTempoProcesso);
+
+                        oracleMVRepository.CompleteColetaSinalVital(coletaSinal.cdColetaSinalVital);
+
+                        var cdTriagemHist = oracleMVRepository.InsertTriagemAtendimentoHist(new TriagemAtendimentoHist(triagemAtendimento, isReclassification, variables));
+
+                        if (listSinalVital?.Any() ?? false)
+                            listSinalVital.ForEach((c) =>
+                            {
+                                oracleMVRepository.InsertTriaAtndHisItColSinVit(cdTriagemHist, coletaSinal.cdColetaSinalVital, c);
+                            });
+
+                        postgreRepository.CreateRelation(new RelationTriage(episodeRelation.idRelationEpisode, webhookRequest.body.idTriage, coletaSinal.cdColetaSinalVital));
                     }
                 }
             }

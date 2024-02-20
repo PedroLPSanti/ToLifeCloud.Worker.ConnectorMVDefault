@@ -16,5 +16,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
         public SinalVitalStruct GetSinalVital(decimal cdSinalVital);
         public Paciente? GetPacienteByCpf(decimal cdMultiEmpresa, string? cpf = null, string? cns = null);
         public string GetTriagemAtendimento(decimal cdTriagemAtendimneto);
+        public void CompleteColetaSinalVital(decimal cdColetaSinalVital);
+        public void InsertTempoProcesso(SacrTempoProcesso sacrTempoProcesso);
+        public decimal InsertTriagemAtendimentoHist(TriagemAtendimentoHist triagemAtendimentoHist);
+        public void InsertTriaAtndHisItColSinVit(decimal cdTriagemAtendimentoHist, decimal cdColetaSinalVital, decimal cdSinalVital);
     }
 }
