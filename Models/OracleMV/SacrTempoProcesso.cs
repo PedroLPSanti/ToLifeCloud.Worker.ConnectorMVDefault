@@ -7,6 +7,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
     [Table("SACR_TEMPO_PROCESSO")]
     public class SacrTempoProcesso
     {
+        //SELECT * FROM SACR_TEMPO_PROCESSO
+        //SELECT* FROM SACR_TIPO_TEMPO_PROCESSO
+
         public SacrTempoProcesso() { }
 
         public SacrTempoProcesso(decimal cdTriagemAtendimento, decimal cdTipoTempoProcesso, string nmUsuario)

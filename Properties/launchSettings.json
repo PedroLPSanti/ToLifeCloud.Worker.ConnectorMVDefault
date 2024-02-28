@@ -1,13 +1,14 @@
 {
-  "Docker": {
-    "useSSL": false
-  },
   "profiles": {
     "ToLifeCloud.Worker.IntegrationMV": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:62823;http://localhost:62824"
     }
+  },
+  "Docker": {
+    "useSSL": false
   }
 }

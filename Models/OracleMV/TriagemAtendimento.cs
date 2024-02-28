@@ -25,7 +25,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
             vlIdade = triageWebhook.patientBirthDate.HasValue ? (int)Math.Floor((DateTime.Now - triageWebhook.patientBirthDate.Value).TotalDays / 365.2425) : null;
             dhPreAtendimentoFim = triageWebhook.endClassification.Value.AddHours(3);
             dsQueixaPrincipal = "Queixa :" + triageWebhook.complaint + "| Discriminador selecionado: " + triageWebhook.discriminator;
-            cdEspecialid = variables.getVariable<decimal>(VariableTypeEnum.especialid, triageWebhook.idForward.Value);
+            cdEspecialid = variables.getVariable<decimal?>(VariableTypeEnum.especialid, triageWebhook.idForward.Value);
             dsAlergia = triageWebhook.allergy;
             dsObservacao = (triageWebhook.atmosphericAir.HasValue ? (triageWebhook.atmosphericAir.Value ? "Ar atmosférico" : "Em terapia de O2") + " | " : "")
                 + (triageWebhook.heartRateRegular.HasValue ? "Batimentos cardíacos: " + (triageWebhook.heartRateRegular.Value ? "Regular" : "Irregular") + " | " : "") +
@@ -39,7 +39,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
             nmUsuarioTriagem = usuarios.nmUsuario;
             vlEscore = triageWebhook.score.HasValue ? triageWebhook.score.Value : 0;//Confirmar esse
             tpClassificacao = "COMPLETA";
-            cdFilaSenha = variables.getVariable<decimal>(VariableTypeEnum.fila_senha, triageWebhook.idForward.Value);
+            cdFilaSenha = variables.getVariable<decimal?>(VariableTypeEnum.fila_senha, triageWebhook.idForward.Value);
             snPrioridadeOcto = vlIdade >= 80 ? "S" : "N";
             snPrioridadeClassificacao = triageWebhook.listIdPriority?.Any() ?? false ? "S" : "N";
             snPrioridadeEspecial = triageWebhook.listIdPriority?.Any() ?? false ? "S" : "N";
@@ -61,7 +61,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public decimal? cdPaciente { get; set; }
 
         [Column("NM_PACIENTE")]
-        public string nmPaciente { get; set; }
+        public string? nmPaciente { get; set; }
 
         [Column("DT_NASCIMENTO")]
         public DateTime? dtNascimento { get; set; }
@@ -70,13 +70,13 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public char? tpSexo { get; set; }
 
         [Column("CD_COR_REFERENCIA")]
-        public decimal cdCorReferencia { get; set; }
+        public decimal? cdCorReferencia { get; set; }
 
         [Column("CD_SINTOMA_AVALIACAO")]
-        public decimal cdSintomaAvaliacao { get; set; }
+        public decimal? cdSintomaAvaliacao { get; set; }
 
         [Column("CD_CLASSIFICACAO")]
-        public decimal cdClassificacao { get; set; }
+        public decimal? cdClassificacao { get; set; }
 
         [Column("CD_MULTI_EMPRESA")]
         public decimal cdMultiEmpresa { get; set; }
@@ -85,61 +85,61 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public int? vlIdade { get; set; }
 
         [Column("DH_PRE_ATENDIMENTO_FIM")]
-        public DateTime dhPreAtendimentoFim { get; set; }
+        public DateTime? dhPreAtendimentoFim { get; set; }
 
         [Column("DS_QUEIXA_PRINCIPAL")]
-        public string dsQueixaPrincipal { get; set; }
+        public string? dsQueixaPrincipal { get; set; }
 
         [Column("CD_ESPECIALID")]
-        public decimal cdEspecialid { get; set; }
+        public decimal? cdEspecialid { get; set; }
 
         [Column("DS_ALERGIA")]
-        public string dsAlergia { get; set; }
+        public string? dsAlergia { get; set; }
 
         [Column("DS_OBSERVACAO")]
-        public string dsObservacao { get; set; }
+        public string? dsObservacao { get; set; }
 
         [Column("DS_SENHA")]
-        public string dsSenha { get; set; }
+        public string? dsSenha { get; set; }
 
         [Column("CD_USUARIO")]
-        public string cdUsuario { get; set; }
+        public string? cdUsuario { get; set; }
 
         [Column("NM_USUARIO_TRIAGEM")]
-        public string nmUsuarioTriagem { get; set; }
+        public string? nmUsuarioTriagem { get; set; }
 
         [Column("VL_ESCORE")]
-        public decimal vlEscore { get; set; }
+        public decimal? vlEscore { get; set; }
 
         [Column("TP_CLASSIFICACAO")]
-        public string tpClassificacao { get; set; }
+        public string? tpClassificacao { get; set; }
 
         [Column("CD_FILA_SENHA")]
-        public decimal cdFilaSenha { get; set; }
+        public decimal? cdFilaSenha { get; set; }
 
         [Column("SN_PRIORIDADE_OCTO")]
-        public string snPrioridadeOcto { get; set; }
+        public string? snPrioridadeOcto { get; set; }
 
         [Column("SN_PRIORIDADE_CLASSIFICACAO")]
-        public string snPrioridadeClassificacao { get; set; }
+        public string? snPrioridadeClassificacao { get; set; }
 
         [Column("SN_PRIORIDADE_ESPECIAL")]
         public string? snPrioridadeEspecial { get; set; }
 
         [Column("SN_ATENDIMENTO_SOCIAL")]
-        public string snAtendimentoSocial { get; set; }
+        public string? snAtendimentoSocial { get; set; }
 
         [Column("SN_CONFIRMA_CHAMADA")]
-        public string snConfirmaChamada { get; set; }
+        public string? snConfirmaChamada { get; set; }
 
         [Column("TP_RASTREAMENTO")]
         public string tpRastreamento { get; set; }
 
         [Column("DH_CHAMADA_CLASSIFICACAO")]
-        public DateTime dhChamadaClassificacao { get; set; }
+        public DateTime? dhChamadaClassificacao { get; set; }
 
         [Column("QT_CHAMADAS")]
-        public decimal qtChamadas { get; set; }
+        public decimal? qtChamadas { get; set; }
 
         //nr_cpf
         //nr_cns

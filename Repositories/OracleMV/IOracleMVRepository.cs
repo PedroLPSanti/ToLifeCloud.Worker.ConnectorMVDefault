@@ -20,5 +20,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
         public void InsertTempoProcesso(SacrTempoProcesso sacrTempoProcesso);
         public decimal InsertTriagemAtendimentoHist(TriagemAtendimentoHist triagemAtendimentoHist);
         public void InsertTriaAtndHisItColSinVit(decimal cdTriagemAtendimentoHist, decimal cdColetaSinalVital, decimal cdSinalVital);
+        public TriagemAtendimento GetTriagemAtendimento();
+        public void CallPaciente(decimal cdMultiEmpresa, decimal cdTriagemAtendimento, string nmMaquina, string tpTempoProcesso, string nmUsuario);
     }
 }

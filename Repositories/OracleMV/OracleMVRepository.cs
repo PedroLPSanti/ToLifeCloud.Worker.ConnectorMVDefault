@@ -59,6 +59,25 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             return query;
         }
 
+        public TriagemAtendimento GetTriagemAtendimento()
+        {
+            var query = (from triagemAtendimento in _contextDBAMV.triagemAtendimento
+                         select triagemAtendimento).OrderByDescending(c => c).FirstOrDefault();
+            return query;
+        }
+
+        public void CallPaciente(decimal cdMultiEmpresa, decimal cdTriagemAtendimento, string nmMaquina, string tpTempoProcesso, string nmUsuario)
+        {
+            var parametros = $"<cdtriagematendimento>{cdTriagemAtendimento}</cdtriagematendimento>" +
+                            $"<cdmultiempresa>{cdMultiEmpresa}</cdmultiempresa>" +
+                            $"<nmmaquina>{nmMaquina}</nmmaquina>" +
+                            $"<tptempoprocesso>{tpTempoProcesso}</tptempoprocesso>" +
+                            $"<nmusuario>{nmUsuario}</nmusuario>";
+            OracleParameter parameter = new OracleParameter("PARAMETROS", parametros);
+            var sql = "CALL DBAMV.PRC_REALIZA_CHAMADA_PAINEL(:PARAMETROS)";
+            int rows = _contextDBAMV.Database.ExecuteSqlRaw(sql, parameter);
+        }
+
         public Paciente? GetPacienteByCpf(decimal cdMultiEmpresa, string? cpf = null, string? cns = null)
         {
             var query = (from paciente in _contextDBAMV.paciente

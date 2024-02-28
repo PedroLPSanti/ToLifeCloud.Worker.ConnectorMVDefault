@@ -24,7 +24,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
             nmUsuarioTriagem = triagemAtendimento.nmUsuarioTriagem;
             vlEscore = triagemAtendimento.vlEscore;
             tpClassificacao = triagemAtendimento.tpClassificacao;
-            cdTriagemAtendimento = triagemAtendimento.cdTriagemAtendimento;
+            cdTriagemAtendimento = triagemAtendimento.cdTriagemAtendimento ;
             dhInicio = triagemAtendimento.dhPreAtendimento;
             dhFim = triagemAtendimento.dhPreAtendimentoFim;
             dhTriagemAtendimentoHist = DateTime.Now;

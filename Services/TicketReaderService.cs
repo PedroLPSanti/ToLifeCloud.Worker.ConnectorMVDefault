@@ -53,6 +53,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                     {
                         string hash = variables.getVariable<string>(VariableTypeEnum.token);//Tem que ser a hash de integração;
                     }
+
+                    var atendimento = oracleRepository.GetTriagemAtendimento();
                 }
             }
             catch (Exception ex)
