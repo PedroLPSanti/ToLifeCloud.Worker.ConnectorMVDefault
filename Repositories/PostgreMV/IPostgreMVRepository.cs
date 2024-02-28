@@ -5,6 +5,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.PostgreMV
 {
     public interface IPostgreMVRepository
     {
+        public RelationEpisode? getLastTicket();
         public RelationEpisode CreateRelation(RelationEpisode relationEpisode);
         public void CreateRelation(RelationTriage triage);
         public List<RelationTriage> ReadTriage(long idRelationEpisode);

@@ -13,10 +13,22 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         [Column("NR_CPF")]
         public string nrCpf { get; set; }
 
+        [Column("NM_PACIENTE")]
+        public string nmPaciente { get; set; }
+
         [Column("NR_CNS")]
         public string nrCns { get; set; }
 
         [Column("CD_MULTI_EMPRESA")]
         public decimal cdMultiEmpresa { get; set; }
+
+        [Column("TP_SEXO")]
+        public char tpSexo { get; set; }
+
+        [Column("DT_NASCIMENTO")]
+        public DateTime? dtNascimento { get; set; }
+
+        [Column("NM_MAE")]
+        public string? nmMae { get; set; }
     }
 }

@@ -12,11 +12,10 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.PostgreMV
             _context = context;
         }
 
-        //public RelationEpisode? getLassTicket()
-        //{
-
-        //    return _context.relationEpisode.Where(c => c.dtGeracaoSenha.HasValue).OrderByDescending(c => c.dtGeracaoSenha).FirstOrDefault();
-        //}
+        public RelationEpisode? getLastTicket()
+        {
+            return _context.relationEpisode.Where(c => c.isMv).OrderByDescending(c => c.datetimeInclusion).FirstOrDefault();
+        }
 
         public RelationEpisode CreateRelation(RelationEpisode relationEpisode)
         {

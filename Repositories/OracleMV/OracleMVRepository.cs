@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Text.RegularExpressions;
 using ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV;
@@ -93,6 +94,15 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
                 query = query.Where(c => c.nrCns == cns);
             }
 
+            return query.FirstOrDefault();
+        }
+
+        public Paciente GetPacienteById(decimal cdMultiEmpresa, decimal cdPaciente)
+        {
+            var query = (from paciente in _contextDBAMV.paciente
+                         where paciente.cdMultiEmpresa == cdMultiEmpresa
+                         && paciente.cdPaciente == cdPaciente
+                         select paciente).AsQueryable();
             return query.FirstOrDefault();
         }
 
@@ -237,6 +247,29 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             });
 
             _contextDBAMV.SaveChanges();
+        }
+
+        public TriagemAtendimento? ReadLastTicket(List<decimal> filas, decimal? cdTriagemAtendimento)
+        {
+            TriagemAtendimento? query;
+            if (cdTriagemAtendimento.HasValue)
+            {
+                query = _contextDBAMV.triagemAtendimento.Where(c =>
+                    c.cdTriagemAtendimento > cdTriagemAtendimento
+                    && c.cdFilaSenha.HasValue
+                    && c.cdAtendimento.HasValue
+                    && filas.Contains(c.cdFilaSenha.Value)
+                ).OrderBy(c => c.cdTriagemAtendimento).FirstOrDefault();
+            }
+            else
+            {
+                query = _contextDBAMV.triagemAtendimento.Where(c =>
+                    c.cdFilaSenha.HasValue
+                    && c.cdAtendimento.HasValue
+                    && filas.Contains(c.cdFilaSenha.Value)
+                ).OrderByDescending(c => c.cdTriagemAtendimento).FirstOrDefault();
+            }
+            return query;
         }
     }
 }

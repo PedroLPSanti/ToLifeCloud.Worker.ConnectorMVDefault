@@ -40,8 +40,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
             vlEscore = triageWebhook.score.HasValue ? triageWebhook.score.Value : 0;//Confirmar esse
             tpClassificacao = "COMPLETA";
             cdFilaSenha = variables.getVariable<decimal?>(VariableTypeEnum.fila_senha, triageWebhook.idForward.Value);
-            snPrioridadeOcto = vlIdade >= 80 ? "S" : "N";
-            snPrioridadeClassificacao = triageWebhook.listIdPriority?.Any() ?? false ? "S" : "N";
+            snPrioridadeOcto = vlIdade >= 80 ? 'S' : 'N';
+            snPrioridadeClassificacao = triageWebhook.listIdPriority?.Any() ?? false ? 'S' : 'N';
             snPrioridadeEspecial = triageWebhook.listIdPriority?.Any() ?? false ? "S" : "N";
             snAtendimentoSocial = "N";
             snConfirmaChamada = "N";
@@ -56,6 +56,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
 
         [Column("DH_PRE_ATENDIMENTO")]
         public DateTime dhPreAtendimento { get; set; }
+
+        [Column("CD_ATENDIMENTO")]
+        public decimal? cdAtendimento { get; set; }
 
         [Column("CD_PACIENTE")]
         public decimal? cdPaciente { get; set; }
@@ -86,6 +89,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
 
         [Column("DH_PRE_ATENDIMENTO_FIM")]
         public DateTime? dhPreAtendimentoFim { get; set; }
+
+        [Column("DH_REMOVIDO")]
+        public DateTime? dhRemovido { get; set; }
 
         [Column("DS_QUEIXA_PRINCIPAL")]
         public string? dsQueixaPrincipal { get; set; }
@@ -118,10 +124,10 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public decimal? cdFilaSenha { get; set; }
 
         [Column("SN_PRIORIDADE_OCTO")]
-        public string? snPrioridadeOcto { get; set; }
+        public char? snPrioridadeOcto { get; set; }
 
         [Column("SN_PRIORIDADE_CLASSIFICACAO")]
-        public string? snPrioridadeClassificacao { get; set; }
+        public char? snPrioridadeClassificacao { get; set; }
 
         [Column("SN_PRIORIDADE_ESPECIAL")]
         public string? snPrioridadeEspecial { get; set; }

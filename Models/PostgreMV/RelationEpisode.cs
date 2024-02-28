@@ -6,6 +6,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.PostgreMV
     [Table("relation_episode")]
     public class RelationEpisode
     {
+        public RelationEpisode()
+        {
+        }
         public RelationEpisode(long idEpisode, decimal cdTriagemAtendimento)
         {
             this.idEpisode = idEpisode;
@@ -22,6 +25,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.PostgreMV
 
         [Column("cd_triagem_atendimento")]
         public decimal cdTriagemAtendimento { get; set; }
+
+        [Column("is_mv")]
+        public bool isMv { get; set; }
 
         [Column("datetime_inclusion")]
         public DateTime datetimeInclusion { get; set; }
