@@ -109,7 +109,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                             if (triageRelation?.Any() ?? false) isReclassification = true;
                         }
 
-                        SacrTempoProcesso sacrTempoProcesso = new SacrTempoProcesso(triagemAtendimento.cdTriagemAtendimento, variables.getVariable<decimal>(VariableTypeEnum.tipo_processo_inicio_classificação), user.nmUsuario);
+                        SacrTempoProcesso sacrTempoProcesso = new SacrTempoProcesso(triagemAtendimento.cdTriagemAtendimento, variables.getVariable<decimal>(VariableTypeEnum.tipo_processo_inicio_classificação), user.nmUsuario, webhookRequest.body.startClassification.Value.AddHours(3));
 
                         oracleMVRepository.InsertTempoProcesso(sacrTempoProcesso);
 
@@ -205,11 +205,13 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
                         sacrTempoProcesso.cdTipoTempoProcesso = variables.getVariable<decimal>(VariableTypeEnum.tipo_processo_fim_classificação);
 
+                        sacrTempoProcesso.dhProcesso = triagemAtendimento.dhPreAtendimentoFim.Value;
+
                         oracleMVRepository.InsertTempoProcesso(sacrTempoProcesso);
 
                         oracleMVRepository.CompleteColetaSinalVital(coletaSinal.cdColetaSinalVital);
 
-                        var cdTriagemHist = oracleMVRepository.InsertTriagemAtendimentoHist(new TriagemAtendimentoHist(triagemAtendimento, isReclassification, variables));
+                        var cdTriagemHist = oracleMVRepository.InsertTriagemAtendimentoHist(new TriagemAtendimentoHist(triagemAtendimento, isReclassification, variables, webhookRequest.body));
 
                         if (listSinalVital?.Any() ?? false)
                             listSinalVital.ForEach((c) =>
