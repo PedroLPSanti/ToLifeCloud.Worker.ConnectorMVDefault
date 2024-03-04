@@ -11,7 +11,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         [Column("CD_PROTOCOLO")]
         public decimal cdProtocolo { get; set; }
         [Column("DS_TIPO_RISCO")]
-        public decimal dsTipoRisco { get; set; }
+        public string dsTipoRisco { get; set; }
         [Column("CD_COR_REFERENCIA")]
         public decimal cdCorReferencia { get; set; }
     }
