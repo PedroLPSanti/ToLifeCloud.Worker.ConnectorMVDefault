@@ -58,7 +58,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
                     var filas = variables.getListVariable(VariableTypeEnum.filas_classificacao);
 
-                    todasFilas = filas.Select(x => decimal.Parse(x.variableIntegration)).ToList();
+                    var list = filas.Select(x => x.variableIntegration).ToList();
+
+                    todasFilas = list.Select(x => decimal.Parse(x)).ToList();
 
                     if (!(todasFilas?.Any() ?? false)) throw new Exception("Nenhuma fila foi configurada para essa unidade");
 
@@ -86,7 +88,13 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
             Paciente paciente = new Paciente();
             if (ticket.cdPaciente.HasValue)
-                paciente = oracleRepository.GetPacienteById(variables.getVariable<decimal>(VariableTypeEnum.multi_empresa), ticket.cdPaciente.Value);
+            {
+                paciente = oracleRepository.GetPacienteById(ticket.cdPaciente.Value);
+                if (paciente == null)
+                {
+                    throw new Exception($"Id do paciente não encontrado na base ${ticket.cdPaciente}");
+                }
+            }
             else
             {
                 paciente.nmPaciente = ticket.nmPaciente;

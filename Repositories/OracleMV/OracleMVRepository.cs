@@ -97,11 +97,10 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             return query.FirstOrDefault();
         }
 
-        public Paciente GetPacienteById(decimal cdMultiEmpresa, decimal cdPaciente)
+        public Paciente GetPacienteById(decimal cdPaciente)
         {
             var query = (from paciente in _contextDBAMV.paciente
-                         where paciente.cdMultiEmpresa == cdMultiEmpresa
-                         && paciente.cdPaciente == cdPaciente
+                         where paciente.cdPaciente == cdPaciente
                          select paciente).AsQueryable();
             return query.FirstOrDefault();
         }
