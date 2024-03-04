@@ -11,7 +11,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public TriagemAtendimentoHist()
         {
         }
-        public TriagemAtendimentoHist(TriagemAtendimento triagemAtendimento, bool isReclassification, ListVariableStruct variables)
+        public TriagemAtendimentoHist(TriagemAtendimento triagemAtendimento, bool isReclassification, ListVariableStruct variables, TriageWebhookStruct triageWebhook)
         {
             cdCorReferencia = triagemAtendimento.cdCorReferencia;
             cdSintomaAvaliacao = triagemAtendimento.cdSintomaAvaliacao;
@@ -25,7 +25,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
             vlEscore = triagemAtendimento.vlEscore;
             tpClassificacao = triagemAtendimento.tpClassificacao;
             cdTriagemAtendimento = triagemAtendimento.cdTriagemAtendimento;
-            dhInicio = triagemAtendimento.dhPreAtendimento;
+            dhInicio = triageWebhook.startClassification.Value.AddHours(3);
             dhFim = triagemAtendimento.dhPreAtendimentoFim;
             dhTriagemAtendimentoHist = DateTime.Now;
             if (isReclassification)

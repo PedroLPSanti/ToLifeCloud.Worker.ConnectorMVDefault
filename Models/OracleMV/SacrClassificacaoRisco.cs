@@ -26,7 +26,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public decimal cdCorReferencia { get; set; }
 
         [Column("CD_SINTOMA_AVALIACAO")]
-        public decimal cdSintomaAvaliacao { get; set; }
+        public decimal? cdSintomaAvaliacao { get; set; }
 
         [Column("CD_CLASSIFICACAO")]
         public decimal cdClassificacao { get; set; }
