@@ -62,7 +62,14 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                         PanelCallWebhookStruct panelCall = JsonConvert.DeserializeObject<PanelCallWebhookStruct>(message.message);
 
                         RelationEpisode relationEpisode = postgreRepository.GetRelation(panelCall.idEpisode);
+
                         if (relationEpisode == null) return;
+
+                        oracleMVRepository.CallPaciente(variables.getVariable<decimal>(VariableTypeEnum.multi_empresa),
+                            relationEpisode.cdTriagemAtendimento,
+                            variables.getVariable<string>(VariableTypeEnum.nm_maquina, panelCall.idRoom),
+                            variables.getVariable<string>(VariableTypeEnum.tp_tempo_processo),
+                            relationEpisode.cdAtendimento);
                     }
                 }
             }

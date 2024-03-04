@@ -11,13 +11,13 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public decimal cdPaciente { get; set; }
 
         [Column("NR_CPF")]
-        public string nrCpf { get; set; }
+        public string? nrCpf { get; set; }
 
         [Column("NM_PACIENTE")]
         public string nmPaciente { get; set; }
 
         [Column("NR_CNS")]
-        public string nrCns { get; set; }
+        public string? nrCns { get; set; }
 
         [Column("CD_MULTI_EMPRESA")]
         public decimal cdMultiEmpresa { get; set; }

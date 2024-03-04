@@ -67,13 +67,13 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             return query;
         }
 
-        public void CallPaciente(decimal cdMultiEmpresa, decimal cdTriagemAtendimento, string nmMaquina, string tpTempoProcesso, string nmUsuario)
+        public void CallPaciente(decimal cdMultiEmpresa, decimal cdTriagemAtendimento, string nmMaquina, string tpTempoProcesso, decimal? cdAtendimento)
         {
             var parametros = $"<cdtriagematendimento>{cdTriagemAtendimento}</cdtriagematendimento>" +
-                            $"<cdmultiempresa>{cdMultiEmpresa}</cdmultiempresa>" +
-                            $"<nmmaquina>{nmMaquina}</nmmaquina>" +
-                            $"<tptempoprocesso>{tpTempoProcesso}</tptempoprocesso>" +
-                            $"<nmusuario>{nmUsuario}</nmusuario>";
+                                (cdAtendimento.HasValue ? $"<cdatendimento>{cdAtendimento}</cdatendimento>" : "") +
+                                $"<cdmultiempresa>{cdMultiEmpresa}</cdmultiempresa>" +
+                                $"<nmmaquina>{nmMaquina}</nmmaquina>" +
+                                $"<tptempoprocesso>{tpTempoProcesso}</tptempoprocesso>";
             OracleParameter parameter = new OracleParameter("PARAMETROS", parametros);
             var sql = "CALL DBAMV.PRC_REALIZA_CHAMADA_PAINEL(:PARAMETROS)";
             int rows = _contextDBAMV.Database.ExecuteSqlRaw(sql, parameter);
@@ -270,6 +270,15 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
                 ).OrderByDescending(c => c.cdTriagemAtendimento).FirstOrDefault();
             }
             return query;
+        }
+
+        public void DeleteAtendimentoTriagem(decimal cdTriagemAtendimento)
+        {
+            var query = _contextDBAMV.triagemAtendimento.FirstOrDefault(c => c.cdTriagemAtendimento == cdTriagemAtendimento);
+            query.dhRemovido = DateTime.Now;
+            query.dsObservacaoRemovido = "EVASÃO";
+            _contextDBAMV.triagemAtendimento.Update(query);
+            _contextDBAMV.SaveChanges();
         }
     }
 }

@@ -45,12 +45,21 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Structs
 
         public T getVariable<T>(VariableTypeEnum variableType, string variableToLife)
         {
+            var t = typeof(T);
             var result = variables.Where(c => c.idVariableType == (int)variableType && c.variableToLife == variableToLife).FirstOrDefault();
             if (result == null)
             {
                 throw new InvalidOperationException($"Variável de integração não configurada: {variableType}.");
             }
-            return (T)Convert.ChangeType(result.variableIntegration, typeof(T));
+            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                if (string.IsNullOrEmpty(result.variableIntegration))
+                {
+                    return default(T);
+                }
+                t = Nullable.GetUnderlyingType(t);
+            }
+            return (T)Convert.ChangeType(result.variableIntegration, t);
         }
 
         public T getVariable<T>(VariableTypeEnum variableType, int variableToLife)

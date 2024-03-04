@@ -52,15 +52,13 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
                     if (!variables.hasValues()) return;
 
-                    string hash = variables.getVariable<string>(VariableTypeEnum.token);//Tem que ser a hash de integração;
-
                     var lastTicket = postgreRepository.getLastTicket();
 
                     List<decimal> todasFilas = new List<decimal>();
 
                     var filas = variables.getListVariable(VariableTypeEnum.filas_classificacao);
 
-                    todasFilas = filas.Select(x => (decimal)x.idIntegrationVariable).ToList();
+                    todasFilas = filas.Select(x => decimal.Parse(x.variableIntegration)).ToList();
 
                     if (!(todasFilas?.Any() ?? false)) throw new Exception("Nenhuma fila foi configurada para essa unidade");
 
@@ -108,8 +106,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                 {
                     patientName = paciente.nmPaciente,
                     birthDate = paciente.dtNascimento,
-                    cpf = Regex.Replace(paciente.nrCpf, "[^. 0-9]", ""),
-                    cns = Regex.Replace(paciente.nrCns, "[^. 0-9]", ""),
+                    cpf = string.IsNullOrEmpty(paciente.nrCpf) ? null : Regex.Replace(paciente.nrCpf, "[^. 0-9]", ""),
+                    cns = string.IsNullOrEmpty(paciente.nrCns) ? null : Regex.Replace(paciente.nrCns, "[^. 0-9]", ""),
                     motherName = paciente.nmMae,
                     idGender = paciente.tpSexo == 'M' ? 2 : (paciente.tpSexo == 'F' ? 3 : 4),
                 },
@@ -127,6 +125,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                 datetimeInclusion = DateTime.UtcNow,
                 idEpisode = result.idEpisode,
                 cdTriagemAtendimento = ticket.cdTriagemAtendimento,
+                cdAtendimento = ticket.cdAtendimento,
                 isMv = true
             });
         }

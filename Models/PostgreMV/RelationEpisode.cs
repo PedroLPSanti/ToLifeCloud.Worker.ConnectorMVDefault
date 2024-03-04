@@ -14,6 +14,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.PostgreMV
             this.idEpisode = idEpisode;
             this.cdTriagemAtendimento = cdTriagemAtendimento;
             datetimeInclusion = DateTime.UtcNow;
+            isMv = false;
         }
 
         [Key]
@@ -25,6 +26,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.PostgreMV
 
         [Column("cd_triagem_atendimento")]
         public decimal cdTriagemAtendimento { get; set; }
+
+        [Column("cd_atendimento")]
+        public decimal? cdAtendimento { get; set; }
 
         [Column("is_mv")]
         public bool isMv { get; set; }

@@ -63,8 +63,10 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                         EvasionWebhookStruct evasion = JsonConvert.DeserializeObject<EvasionWebhookStruct>(message.message);
 
                         RelationEpisode relationEpisode = postgreRepository.GetRelation(evasion.idEpisode);
+                        
                         if (relationEpisode == null) return;
                         
+                        oracleMVRepository.DeleteAtendimentoTriagem(relationEpisode.cdTriagemAtendimento);
                     }
                 }
             }

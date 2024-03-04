@@ -147,6 +147,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         [Column("QT_CHAMADAS")]
         public decimal? qtChamadas { get; set; }
 
+        [Column("DS_OBSERVACAO_REMOVIDO")]
+        public string? dsObservacaoRemovido { get; set; }
         //nr_cpf
         //nr_cns
         //cd_paciente

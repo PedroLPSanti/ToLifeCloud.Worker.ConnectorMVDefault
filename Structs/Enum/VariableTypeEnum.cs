@@ -25,6 +25,8 @@
         tipo_processo_fim_classificação = 86,
         hist_classificacao_tip = 87,
         hist_reclassificacao_tip = 88,
-        filas_classificacao = 89
+        filas_classificacao = 89,
+        tp_tempo_processo = 90,
+        nm_maquina = 91
     }
 }

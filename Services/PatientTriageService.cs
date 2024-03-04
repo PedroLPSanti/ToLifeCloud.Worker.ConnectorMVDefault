@@ -66,11 +66,12 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
                         RelationEpisode episodeRelation = postgreRepository.GetRelation(webhookRequest.body.idEpisode);
 
+
                         var user = oracleMVRepository.GetUserByCpf(webhookRequest.body.userClassificationCPF);
 
                         if (user == null)
                         {
-                            throw new Exception($"CPF do user {webhookRequest.body.idUserClassification}, não cadastrado!");
+                            throw new Exception($"CPF do user {webhookRequest.body.userClassificationName}, não cadastrado!");
                         }
 
                         Paciente? paciente = null;
@@ -100,7 +101,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                         else
                         {
                             triagemAtendimento.cdTriagemAtendimento = episodeRelation.cdTriagemAtendimento;
-                            isReclassification = true;
+                            var triageRelation = postgreRepository.ReadTriage(episodeRelation.idRelationEpisode);
+                            if (triageRelation?.Any() ?? false) isReclassification = true;
                         }
 
                         SacrTempoProcesso sacrTempoProcesso = new SacrTempoProcesso(triagemAtendimento.cdTriagemAtendimento, variables.getVariable<decimal>(VariableTypeEnum.tipo_processo_inicio_classificação), user.nmUsuario);
