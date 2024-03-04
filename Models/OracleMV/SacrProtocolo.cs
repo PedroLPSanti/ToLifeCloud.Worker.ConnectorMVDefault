@@ -7,10 +7,10 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
     public class SacrProtocolo
     {
         [Key]
-        [Column("cd_protocolo")]
-        public decimal cd_protocolo { get; set; }
+        [Column("CD_PROTOCOLO")]
+        public decimal cdProtocolo { get; set; }
 
-        [Column("ds_protocolo")]
-        public string ds_protocolo { get; set; }
+        [Column("DS_PROTOCOLO")]
+        public string dsProtocolo { get; set; }
     }
 }

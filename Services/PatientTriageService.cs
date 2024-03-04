@@ -74,6 +74,10 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                             throw new Exception($"CPF do user {webhookRequest.body.userClassificationName}, não cadastrado!");
                         }
 
+                        oracleMVRepository.ValidateGravityConfig(variables.getVariable<decimal>(VariableTypeEnum.multi_empresa),
+                            variables.getVariable<decimal>(VariableTypeEnum.cor_referencia, webhookRequest.body.idGravity),
+                            variables.getVariable<decimal>(VariableTypeEnum.classificacao, webhookRequest.body.idGravity));
+
                         Paciente? paciente = null;
                         if (!string.IsNullOrEmpty(webhookRequest.body.patientCpf) || !string.IsNullOrEmpty(webhookRequest.body.patientCns))
                         {

@@ -24,5 +24,6 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
         public void CallPaciente(decimal cdMultiEmpresa, decimal cdTriagemAtendimento, string nmMaquina, string tpTempoProcesso, decimal? cdAtendimento);
         public TriagemAtendimento? ReadLastTicket(List<decimal> filas, decimal? cdTriagemAtendimento = null);
         public void DeleteAtendimentoTriagem(decimal cdTriagemAtendimento);
+        public void ValidateGravityConfig(decimal cdMultiEmpresa, decimal cdCorReferencia, decimal cdClassificacao);
     }
 }

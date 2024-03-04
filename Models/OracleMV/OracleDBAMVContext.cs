@@ -47,5 +47,11 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public DbSet<TriagemAtendimentoHist> triagemAtendimentoHist { get; set; }
 
         public DbSet<TriaAtndHisItColSinVit> triaAtndHisItColSinVit { get; set; }
+
+        public DbSet<SacrClassificacao> sacrClassificacao { get; set; }
+
+        public DbSet<SacrCorReferencia> sacrCorReferencia { get; set; }
+
+        public DbSet<SacrProtocoloMultiEmpresa> sacrProtocoloMultiEmpresa { get; set; }
     }
 }

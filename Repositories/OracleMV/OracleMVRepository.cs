@@ -212,6 +212,26 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             return query;
         }
 
+        public void ValidateGravityConfig(decimal cdMultiEmpresa, decimal cdCorReferencia, decimal cdClassificacao)
+        {
+            var query = (from sacrClassificacao in _contextDBAMV.sacrClassificacao
+                         join sacrProtocoloMultiEmpresa in _contextDBAMV.sacrProtocoloMultiEmpresa
+                            on sacrClassificacao.cdProtocolo equals sacrProtocoloMultiEmpresa.cdProtocolo
+                         join sacrProtocolo in _contextDBAMV.sacrProtocolo
+               on sacrClassificacao.cdProtocolo equals sacrProtocolo.cdProtocolo
+                         join sacrCorReferencia in _contextDBAMV.sacrCorReferencia
+               on sacrClassificacao.cdCorReferencia equals sacrCorReferencia.cdCorReferencia
+                         where sacrProtocoloMultiEmpresa.cdMultiEmpresa == cdMultiEmpresa
+                         && sacrCorReferencia.cdCorReferencia == cdCorReferencia
+                         && sacrClassificacao.cdClassificacao == cdClassificacao
+                         select sacrClassificacao)
+               .FirstOrDefault();
+            if (query == null)
+            {
+                throw new Exception($"Unidade não está configurada para usar os valores de cor referência: {cdCorReferencia} e classificação: {cdClassificacao}");
+            }
+        }
+
 
         public void InsertTempoProcesso(SacrTempoProcesso sacrTempoProcesso)
         {
