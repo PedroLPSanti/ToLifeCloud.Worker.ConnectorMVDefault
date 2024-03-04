@@ -13,13 +13,16 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         }
         public TriagemAtendimento(TriageWebhookStruct triageWebhook, Usuarios usuarios, ListVariableStruct variables, Paciente paciente)
         {
-            dhPreAtendimento = triageWebhook.startClassification.Value.AddHours(3);
+            dhPreAtendimento = triageWebhook.dateTimeInclusion;
             cdPaciente = paciente != null ? paciente.cdPaciente : null;
             nmPaciente = triageWebhook.patientName;
             dtNascimento = triageWebhook.patientBirthDate.HasValue ? triageWebhook.patientBirthDate.Value : null;
             tpSexo = string.IsNullOrEmpty(triageWebhook.patientGender) ? null : variables.getVariable<char>(VariableTypeEnum.sexo, triageWebhook.patientGender);
             cdCorReferencia = variables.getVariable<decimal>(VariableTypeEnum.cor_referencia, triageWebhook.idGravity);
-            cdSintomaAvaliacao = variables.getVariable<decimal>(VariableTypeEnum.sintoma_avaliacao, triageWebhook.idFlowchart.Value);
+            if (triageWebhook.idGravity != (int)GravityEnum.white)
+            {
+                cdSintomaAvaliacao = variables.getVariable<decimal>(VariableTypeEnum.sintoma_avaliacao, triageWebhook.idFlowchart.Value);
+            }
             cdClassificacao = variables.getVariable<decimal>(VariableTypeEnum.classificacao, triageWebhook.idGravity);
             cdMultiEmpresa = variables.getVariable<decimal>(VariableTypeEnum.multi_empresa);
             vlIdade = triageWebhook.patientBirthDate.HasValue ? (int)Math.Floor((DateTime.Now - triageWebhook.patientBirthDate.Value).TotalDays / 365.2425) : null;
@@ -32,7 +35,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
                 (!string.IsNullOrEmpty(triageWebhook.diseaseHistory) ? "Histórico de doenças:" + triageWebhook.diseaseHistory + " | " : "")
                  + (triageWebhook.fallRisk.HasValue ? "Risco de queda: " + (triageWebhook.fallRisk.Value ? "Sim" : "Não") + " | " : "")
                  + (triageWebhook.idSuspicion.HasValue ? "Suspeita: " + (Util.GetSuspicion(triageWebhook.idSuspicion.Value)) + " | " : "")
-                 + (triageWebhook.idPain.HasValue && triageWebhook.idPain.Value >= 1 && triageWebhook.idPain.Value <= 9 ? "Dor: " + (Util.GetPainDescription(triageWebhook.idPain.Value)) + " | " : "")
+                 + (triageWebhook.idPain.HasValue && triageWebhook.idPain.Value >= 2 && triageWebhook.idPain.Value <= 9 ? "Dor: " + (Util.GetPainDescription(triageWebhook.idPain.Value)) + " | " : "")
                 + (string.IsNullOrEmpty(triageWebhook.observations) ? "" : "Observações: " + triageWebhook.observations);
             dsSenha = triageWebhook.ticketName;
             cdUsuario = usuarios.cdUsuario;

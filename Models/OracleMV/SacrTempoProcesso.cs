@@ -12,11 +12,11 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
 
         public SacrTempoProcesso() { }
 
-        public SacrTempoProcesso(decimal cdTriagemAtendimento, decimal cdTipoTempoProcesso, string nmUsuario)
+        public SacrTempoProcesso(decimal cdTriagemAtendimento, decimal cdTipoTempoProcesso, string nmUsuario, DateTime dhProcesso)
         {
             this.cdTriagemAtendimento = cdTriagemAtendimento;
             this.cdTipoTempoProcesso = cdTipoTempoProcesso;
-            dhProcesso = DateTime.Now;
+            this.dhProcesso = dhProcesso;
             nmMaquina = "Integração ToLife";
             this.nmUsuario = nmUsuario;
             dsSequenciaProcesso = "1,2,3,4,5";
