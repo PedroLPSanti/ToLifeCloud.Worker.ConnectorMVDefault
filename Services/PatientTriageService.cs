@@ -114,34 +114,34 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                     if (webhookRequest.body.hasVitalSigns())
                     {
                         if (webhookRequest.body.weight.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, webhookRequest.body.weight.Value));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_peso, variables, coletaSinal, webhookRequest.body.weight.Value));
 
                         if (webhookRequest.body.height.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, webhookRequest.body.height.Value));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_altura, variables, coletaSinal, webhookRequest.body.height.Value));
 
                         if (webhookRequest.body.temperature.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, webhookRequest.body.temperature.Value));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_temperatura, variables, coletaSinal, webhookRequest.body.temperature.Value));
 
                         if (webhookRequest.body.heartRate.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, webhookRequest.body.heartRate.Value));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_pulso, variables, coletaSinal, webhookRequest.body.heartRate.Value));
 
                         if (webhookRequest.body.bloodPressureSystole.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, webhookRequest.body.bloodPressureSystole.Value));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_pressao_sistolica, variables, coletaSinal, webhookRequest.body.bloodPressureSystole.Value));
 
                         if (webhookRequest.body.bloodPressureDiastole.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, webhookRequest.body.bloodPressureDiastole.Value));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_pressao_diastolica, variables, coletaSinal, webhookRequest.body.bloodPressureDiastole.Value));
 
                         if (webhookRequest.body.respiratoryFrequency.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, webhookRequest.body.respiratoryFrequency.Value));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_frequencia_respiratoria, variables, coletaSinal, webhookRequest.body.respiratoryFrequency.Value));
 
                         if (webhookRequest.body.saturation.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, webhookRequest.body.saturation.Value));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_oxigenio, variables, coletaSinal, webhookRequest.body.saturation.Value));
 
                         if (webhookRequest.body.idPain.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, Util.GetPain(webhookRequest.body.idPain.Value)));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_dor, variables, coletaSinal, Util.GetPain(webhookRequest.body.idPain.Value)));
 
                         if (webhookRequest.body.glucose.HasValue)
-                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, variables, coletaSinal, webhookRequest.body.glucose.Value));
+                            listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_glicose, variables, coletaSinal, webhookRequest.body.glucose.Value));
                     }
                     if (webhookRequest.body.glasgow.HasValue)
                         oracleMVRepository.InsertPaguAvaliacao(new PaguAvaliacao(webhookRequest.body, triagemAtendimento.cdTriagemAtendimento, variables, VariableTypeEnum.sinal_vital_glasgow, webhookRequest.body.glasgow.Value));
@@ -180,9 +180,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
             }
         }
 
-        private decimal SaveItColetaSinalVital(IOracleMVRepository oracleMVRepository, ListVariableStruct variables, ColetaSinalVital coletaSinal, float value)
+        private decimal SaveItColetaSinalVital(IOracleMVRepository oracleMVRepository, VariableTypeEnum typeSinalVital, ListVariableStruct variables, ColetaSinalVital coletaSinal, float value)
         {
-            var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(VariableTypeEnum.sinal_vital_glicose));
+            var sinalVital = oracleMVRepository.GetSinalVital(variables.getVariable<decimal>(typeSinalVital));
             oracleMVRepository.InsertColetaSinalVital(new ItColetaSinalVital(sinalVital, coletaSinal.cdColetaSinalVital, value));
             return sinalVital.cdSinalVital;
         }

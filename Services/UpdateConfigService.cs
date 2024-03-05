@@ -37,7 +37,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                 {
                     var postgreRepository = scope.ServiceProvider.GetRequiredService<IPostgreMVRepository>();
                     var variables = postgreRepository.GetRelationConfig();
-                    MessageQueueResponse message = new MessageQueueResponse();
+                    bool? message = null;
                     bool hasHash = false;
                     if (variables.hasValues())
                     {
@@ -45,10 +45,10 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                         if (hash != null && !string.IsNullOrEmpty(hash))
                         {
                             hasHash = true;
-                            message = SRVMessageQueue.GetMessage(_appSettings.urlSRVMessageQueue, "UpdateConfig", hash);
+                            message = SRVMessageQueue.GetMessage<bool?>(_appSettings.urlSRVMessageQueue, "UpdateConfig", hash);
                         }
                     }
-                    if (!hasHash || message.ValidValue())
+                    if (!hasHash || (message.HasValue && message.Value))
                     {
                         var result = IntegrationRelationConfig.GetVariables(_appSettings.urlIntegrationRelationConfig, _appSettings.idHealthUnit, _appSettings.internalLoginHash);
                         if (!result.isError)
