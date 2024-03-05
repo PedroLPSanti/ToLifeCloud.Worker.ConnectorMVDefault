@@ -4,12 +4,13 @@ using System;
 using System.Net.Http;
 using System.Text;
 using ToLifeCloud.Worker.ConnectorMVDefault.Responses;
+using ToLifeCloud.Worker.ConnectorMVDefault.Structs;
 
 namespace ToLifeCloud.Worker.ConnectorMVDefault.Client
 {
     public static class SRVMessageQueue
     {
-        public static MessageQueueResponse GetMessage(string urlBase, string idMessageType, string token)
+        public static T? GetMessage<T>(string urlBase, string idMessageType, string token)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -26,7 +27,11 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Client
 
                 MessageQueueResponse result = JsonConvert.DeserializeObject<MessageQueueResponse>(responseString);
 
-                return result;
+                if (result.isError) throw new Exception(result.errorDescription);
+
+                if (result.message == null) return default(T);
+
+                return JsonConvert.DeserializeObject<T>(result.message);
             }
         }
     }

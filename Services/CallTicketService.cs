@@ -37,40 +37,29 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
         public void Process()
         {
-            LogBatchResponse logBatchResponse = null;
-            string? objectMessage = null;
+            PanelCallWebhookStruct? panelCall = null;
             try
             {
                 using (var scope = Services.CreateScope())
                 {
                     var oracleMVRepository = scope.ServiceProvider.GetRequiredService<IOracleMVRepository>();
                     var postgreRepository = scope.ServiceProvider.GetRequiredService<IPostgreMVRepository>();
+
                     var variables = postgreRepository.GetRelationConfig();
-                    if (variables.hasValues())
-                    {
-                        var hash = variables.getVariable<string>(VariableTypeEnum.token);
-                        var message = SRVMessageQueue.GetMessage(_appSettings.urlSRVMessageQueue, "CallTicket", hash);
-                        if (message.isError)
-                        {
-                            throw new Exception(message.errorDescription);
-                        }
-                        else if (string.IsNullOrEmpty(message.message))
-                        {
-                            return;
-                        }
-                        objectMessage = message.message;
-                        PanelCallWebhookStruct panelCall = JsonConvert.DeserializeObject<PanelCallWebhookStruct>(message.message);
 
-                        RelationEpisode relationEpisode = postgreRepository.GetRelation(panelCall.idEpisode);
+                    if (!variables.hasValues()) return;
 
-                        if (relationEpisode == null) return;
+                    var hash = variables.getVariable<string>(VariableTypeEnum.token);
 
-                        oracleMVRepository.CallPaciente(variables.getVariable<decimal>(VariableTypeEnum.multi_empresa),
-                            relationEpisode.cdTriagemAtendimento,
-                            variables.getVariable<string>(VariableTypeEnum.nm_maquina, panelCall.idRoom),
-                            variables.getVariable<string>(VariableTypeEnum.tp_tempo_processo),
-                            relationEpisode.cdAtendimento);
-                    }
+                    panelCall = SRVMessageQueue.GetMessage<PanelCallWebhookStruct>(_appSettings.urlSRVMessageQueue, "CallTicket", hash);
+
+                    if (panelCall == null) return;
+
+                    RelationEpisode relationEpisode = postgreRepository.GetRelation(panelCall.idEpisode);
+
+                    if (relationEpisode == null) return;
+
+                    oracleMVRepository.CallPaciente(variables, panelCall, relationEpisode);
                 }
             }
             catch (Exception ex)
@@ -78,7 +67,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
                 _log.Save(LogTypeEnum.Error, (int)_appSettings.idHealthUnit,
                     $"{MethodBase.GetCurrentMethod().ReflectedType.Name}.{MethodBase.GetCurrentMethod().Name}",
-                    null, null, ex);
+                    null, $"{JsonConvert.SerializeObject(panelCall)}", ex);
             }
         }
     }

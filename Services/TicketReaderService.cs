@@ -58,15 +58,11 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
                     var filas = variables.getListVariable(VariableTypeEnum.filas_classificacao);
 
-                    var list = filas.Select(x => x.variableIntegration).ToList();
-
-                    todasFilas = list.Select(x => decimal.Parse(x)).ToList();
+                    todasFilas = filas.Select(x => decimal.Parse(x.variableIntegration))?.Distinct()?.ToList();
 
                     if (!(todasFilas?.Any() ?? false)) throw new Exception("Nenhuma fila foi configurada para essa unidade");
 
-                    todasFilas = todasFilas.Distinct().ToList();
-
-                    TriagemAtendimento ticket = lastTicket != null ? oracleRepository.ReadLastTicket(todasFilas, lastTicket.cdTriagemAtendimento) : oracleRepository.ReadLastTicket(todasFilas);
+                    TriagemAtendimento ticket = oracleRepository.ReadLastTicket(todasFilas, lastTicket);
 
                     if (ticket == null) return;
 
@@ -91,9 +87,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
             {
                 paciente = oracleRepository.GetPacienteById(ticket.cdPaciente.Value);
                 if (paciente == null)
-                {
                     throw new Exception($"Id do paciente não encontrado na base ${ticket.cdPaciente}");
-                }
+
             }
             else
             {

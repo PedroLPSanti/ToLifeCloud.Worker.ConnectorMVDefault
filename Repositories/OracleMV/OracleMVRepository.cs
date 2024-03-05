@@ -6,9 +6,11 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Text.RegularExpressions;
 using ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV;
+using ToLifeCloud.Worker.ConnectorMVDefault.Models.PostgreMV;
 using ToLifeCloud.Worker.ConnectorMVDefault.Requests;
 using ToLifeCloud.Worker.ConnectorMVDefault.Structs;
 using ToLifeCloud.Worker.ConnectorMVDefault.Structs.Enum;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
 {
@@ -67,8 +69,14 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             return query;
         }
 
-        public void CallPaciente(decimal cdMultiEmpresa, decimal cdTriagemAtendimento, string nmMaquina, string tpTempoProcesso, decimal? cdAtendimento)
+        public void CallPaciente(ListVariableStruct variables, PanelCallWebhookStruct panelCall, RelationEpisode relationEpisode)
         {
+            decimal cdMultiEmpresa = variables.getVariable<decimal>(VariableTypeEnum.multi_empresa);
+            decimal cdTriagemAtendimento = relationEpisode.cdTriagemAtendimento;
+            string nmMaquina = variables.getVariable<string>(VariableTypeEnum.nm_maquina, panelCall.idRoom);
+            string tpTempoProcesso = variables.getVariable<string>(VariableTypeEnum.tp_tempo_processo);
+            decimal? cdAtendimento = relationEpisode.cdAtendimento;
+
             var parametros = $"<cdtriagematendimento>{cdTriagemAtendimento}</cdtriagematendimento>" +
                                 (cdAtendimento.HasValue ? $"<cdatendimento>{cdAtendimento}</cdatendimento>" : "") +
                                 $"<cdmultiempresa>{cdMultiEmpresa}</cdmultiempresa>" +
@@ -211,8 +219,12 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             return query;
         }
 
-        public void ValidateGravityConfig(decimal cdMultiEmpresa, decimal cdCorReferencia, decimal cdClassificacao)
+        public void ValidateGravityConfig(ListVariableStruct variables, int idGravity)
         {
+            decimal cdMultiEmpresa = variables.getVariable<decimal>(VariableTypeEnum.multi_empresa);
+            decimal cdCorReferencia = variables.getVariable<decimal>(VariableTypeEnum.cor_referencia, idGravity);
+            decimal cdClassificacao = variables.getVariable<decimal>(VariableTypeEnum.classificacao, idGravity);
+
             var query = (from sacrClassificacao in _contextDBAMV.sacrClassificacao
                          join sacrProtocoloMultiEmpresa in _contextDBAMV.sacrProtocoloMultiEmpresa
                             on sacrClassificacao.cdProtocolo equals sacrProtocoloMultiEmpresa.cdProtocolo
@@ -268,27 +280,17 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             _contextDBAMV.SaveChanges();
         }
 
-        public TriagemAtendimento? ReadLastTicket(List<decimal> filas, decimal? cdTriagemAtendimento)
+        public TriagemAtendimento? ReadLastTicket(List<decimal> filas, RelationEpisode? episode)
         {
-            TriagemAtendimento? query;
-            if (cdTriagemAtendimento.HasValue)
-            {
-                query = _contextDBAMV.triagemAtendimento.Where(c =>
-                    c.cdTriagemAtendimento > cdTriagemAtendimento
-                    && c.cdFilaSenha.HasValue
-                    && c.cdAtendimento.HasValue
-                    && filas.Contains(c.cdFilaSenha.Value)
-                ).OrderBy(c => c.cdTriagemAtendimento).FirstOrDefault();
-            }
-            else
-            {
-                query = _contextDBAMV.triagemAtendimento.Where(c =>
-                    c.cdFilaSenha.HasValue
-                    && c.cdAtendimento.HasValue
-                    && filas.Contains(c.cdFilaSenha.Value)
-                ).OrderByDescending(c => c.cdTriagemAtendimento).FirstOrDefault();
-            }
-            return query;
+            var query = _contextDBAMV.triagemAtendimento.Where(c =>
+                c.cdFilaSenha.HasValue && c.cdAtendimento.HasValue
+                && filas.Contains(c.cdFilaSenha.Value)
+            ).AsQueryable();
+
+            if (episode != null)
+                query = query.Where(c => c.cdTriagemAtendimento > episode.cdTriagemAtendimento);
+
+            return query.OrderBy(c => c.cdTriagemAtendimento).FirstOrDefault();
         }
 
         public void DeleteAtendimentoTriagem(decimal cdTriagemAtendimento)

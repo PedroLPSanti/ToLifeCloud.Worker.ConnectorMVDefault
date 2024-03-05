@@ -1,4 +1,5 @@
 ﻿using ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV;
+using ToLifeCloud.Worker.ConnectorMVDefault.Models.PostgreMV;
 using ToLifeCloud.Worker.ConnectorMVDefault.Structs;
 
 namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
@@ -21,9 +22,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
         public void InsertTempoProcesso(SacrTempoProcesso sacrTempoProcesso);
         public decimal InsertTriagemAtendimentoHist(TriagemAtendimentoHist triagemAtendimentoHist);
         public void InsertTriaAtndHisItColSinVit(decimal cdTriagemAtendimentoHist, decimal cdColetaSinalVital, decimal cdSinalVital);
-        public void CallPaciente(decimal cdMultiEmpresa, decimal cdTriagemAtendimento, string nmMaquina, string tpTempoProcesso, decimal? cdAtendimento);
-        public TriagemAtendimento? ReadLastTicket(List<decimal> filas, decimal? cdTriagemAtendimento = null);
+        public void CallPaciente(ListVariableStruct variables, PanelCallWebhookStruct panelCall, RelationEpisode relationEpisode);
+        public TriagemAtendimento? ReadLastTicket(List<decimal> filas, RelationEpisode? cdTriagemAtendimento = null);
         public void DeleteAtendimentoTriagem(decimal cdTriagemAtendimento);
-        public void ValidateGravityConfig(decimal cdMultiEmpresa, decimal cdCorReferencia, decimal cdClassificacao);
+        public void ValidateGravityConfig(ListVariableStruct variables, int idGravity);
     }
 }

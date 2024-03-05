@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using ToLifeCloud.SRVLog;
 using ToLifeCloud.SRVLog.Enum;
 using ToLifeCloud.SRVLog.Response;
@@ -34,14 +35,14 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                 using (var scope = Services.CreateScope())
                 {
                     IPostgreMVRepository postgreRepository = scope.ServiceProvider.GetRequiredService<IPostgreMVRepository>();
+
                     ListVariableStruct variables = postgreRepository.GetRelationConfig();
-                    if (variables.variables?.Any() ?? false)
-                    {
-                        IntegrationRelationConfig.SendKeepAlive(_appSettings.urlIntegrationRelationConfig, new KeepAliveRequest
-                        {
-                            idHealthUnitRelation = variables.variables.First().idHealthUnitRelation
-                        }, variables.getVariable<string>(VariableTypeEnum.token));
-                    }
+
+                    if (!variables.hasValues()) return;
+
+                    IntegrationRelationConfig.SendKeepAlive(_appSettings.urlIntegrationRelationConfig,
+                        new KeepAliveRequest(variables.variables.First().idHealthUnitRelation),
+                        variables.getVariable<string>(VariableTypeEnum.token));
                 }
             }
             catch (Exception ex)

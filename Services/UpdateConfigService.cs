@@ -48,8 +48,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                             message = SRVMessageQueue.GetMessage(_appSettings.urlSRVMessageQueue, "UpdateConfig", hash);
                         }
                     }
-                    bool value;
-                    if (!hasHash || (!message.isError && !string.IsNullOrEmpty(message.message) && Boolean.TryParse(message.message, out value) && value))
+                    if (!hasHash || message.ValidValue())
                     {
                         var result = IntegrationRelationConfig.GetVariables(_appSettings.urlIntegrationRelationConfig, _appSettings.idHealthUnit, _appSettings.internalLoginHash);
                         if (!result.isError)

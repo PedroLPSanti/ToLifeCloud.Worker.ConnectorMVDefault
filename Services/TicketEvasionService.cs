@@ -23,8 +23,6 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
         private Log _log;
         private LogBatch _logBatch;
 
-        //private BillingDataRepository _billingDataRepository;
-
         private IServiceProvider Services { get; }
         public TicketEvasionService(AppSettings appSettings, IServiceProvider services)
         {
@@ -37,8 +35,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
         public void Process()
         {
-            LogBatchResponse logBatchResponse = null;
-            string? objectMessage = null;
+            EvasionWebhookStruct? evasion = null;
             try
             {
                 using (var scope = Services.CreateScope())
@@ -47,27 +44,20 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                     var postgreRepository = scope.ServiceProvider.GetRequiredService<IPostgreMVRepository>();
 
                     var variables = postgreRepository.GetRelationConfig();
-                    if (variables.hasValues())
-                    {
-                        var hash = variables.getVariable<string>(VariableTypeEnum.token);
-                        var message = SRVMessageQueue.GetMessage(_appSettings.urlSRVMessageQueue, "TicketEvasion", hash);
-                        if (message.isError)
-                        {
-                            throw new Exception(message.errorDescription);
-                        }
-                        else if (string.IsNullOrEmpty(message.message))
-                        {
-                            return;
-                        }
-                        objectMessage = message.message;
-                        EvasionWebhookStruct evasion = JsonConvert.DeserializeObject<EvasionWebhookStruct>(message.message);
 
-                        RelationEpisode relationEpisode = postgreRepository.GetRelation(evasion.idEpisode);
-                        
-                        if (relationEpisode == null) return;
-                        
-                        oracleMVRepository.DeleteAtendimentoTriagem(relationEpisode.cdTriagemAtendimento);
-                    }
+                    if (!variables.hasValues()) return;
+
+                    var hash = variables.getVariable<string>(VariableTypeEnum.token);
+
+                    evasion = SRVMessageQueue.GetMessage<EvasionWebhookStruct?>(_appSettings.urlSRVMessageQueue, "TicketEvasion", hash);
+
+                    if (evasion == null) return;
+
+                    RelationEpisode relationEpisode = postgreRepository.GetRelation(evasion.idEpisode);
+
+                    if (relationEpisode == null) return;
+
+                    oracleMVRepository.DeleteAtendimentoTriagem(relationEpisode.cdTriagemAtendimento);
                 }
             }
             catch (Exception ex)
@@ -75,7 +65,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
 
                 _log.Save(LogTypeEnum.Error, (int)_appSettings.idHealthUnit,
                     $"{MethodBase.GetCurrentMethod().ReflectedType.Name}.{MethodBase.GetCurrentMethod().Name}",
-                    null, null, ex);
+                    null, $"{JsonConvert.SerializeObject(evasion)}", ex);
             }
         }
     }
