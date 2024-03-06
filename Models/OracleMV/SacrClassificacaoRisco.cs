@@ -12,7 +12,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public SacrClassificacaoRisco(TriagemAtendimento triagemAtendimento)
         {
             cdCorReferencia = triagemAtendimento.cdCorReferencia.Value;
-            cdSintomaAvaliacao = triagemAtendimento.cdSintomaAvaliacao.Value;
+            cdSintomaAvaliacao = triagemAtendimento.cdSintomaAvaliacao;
             cdClassificacao = triagemAtendimento.cdClassificacao.Value;
             dsObservacao = triagemAtendimento.dsObservacao;
             cdTriagemAtendimento = triagemAtendimento.cdTriagemAtendimento;
