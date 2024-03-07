@@ -33,9 +33,12 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Worker
                 TicketReaderService passwordReaderService = new TicketReaderService(_appSettings, Services);
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    UtilLogs.PrintLog(_logger, _appSettings, "Worker TicketReader running at: {time}", DateTimeOffset.Now);
-                    passwordReaderService.Process();
-                    await Task.Delay(_appSettings.workersDelays.ticketReader, stoppingToken);
+                    UtilLogs.PrintLog(_logger, _appSettings, "Worker TicketReader running at: {time}", DateTimeOffset.Now);                    
+                    if (passwordReaderService.Process())
+                        await Task.Delay(_appSettings.workersDelays.ticketReader, stoppingToken);
+                    else
+                        await Task.Delay(1000, stoppingToken);
+
                 }
             }
         });

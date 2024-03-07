@@ -283,14 +283,20 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
         public TriagemAtendimento? ReadLastTicket(List<decimal> filas, RelationEpisode? episode)
         {
             var query = _contextDBAMV.triagemAtendimento.Where(c =>
-                c.cdFilaSenha.HasValue && c.cdAtendimento.HasValue
-                && filas.Contains(c.cdFilaSenha.Value)
+                c.cdFilaSenha.HasValue && filas.Contains(c.cdFilaSenha.Value)
             ).AsQueryable();
 
             if (episode != null)
                 query = query.Where(c => c.cdTriagemAtendimento > episode.cdTriagemAtendimento);
 
             return query.OrderBy(c => c.cdTriagemAtendimento).FirstOrDefault();
+        }
+
+        public TriagemAtendimento? ReadNextTicket(List<decimal> listTriagemAtendimento)
+        {
+            return _contextDBAMV.triagemAtendimento.Where(c =>
+                listTriagemAtendimento.Contains(c.cdTriagemAtendimento) && c.cdAtendimento.HasValue
+            ).OrderBy(c => c.cdTriagemAtendimento).FirstOrDefault();
         }
 
         public void DeleteAtendimentoTriagem(decimal cdTriagemAtendimento)

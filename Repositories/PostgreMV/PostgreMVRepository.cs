@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using ToLifeCloud.Worker.ConnectorMVDefault.Models.PostgreMV;
 using ToLifeCloud.Worker.ConnectorMVDefault.Structs;
 
@@ -12,9 +13,19 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.PostgreMV
             _context = context;
         }
 
-        public RelationEpisode? getLastTicket()
+        public List<RelationEpisode> getLastTicket()
         {
-            return _context.relationEpisode.Where(c => c.isMv).OrderByDescending(c => c.datetimeInclusion).FirstOrDefault();
+            var todayLimits = DateTime.UtcNow.AddHours(-12);
+
+            var atendimentos = _context.relationEpisode.Where(c => c.isMv && !c.cdAtendimento.HasValue && c.datetimeInclusion >= todayLimits).OrderBy(c => c.datetimeInclusion).ToList();
+
+            var last = _context.relationEpisode.Where(c => c.isMv && c.cdAtendimento.HasValue).OrderByDescending(c => c.datetimeInclusion).FirstOrDefault();
+
+            if (!(atendimentos?.Any() ?? false)) return new List<RelationEpisode> { last };
+
+            if (last != null && !atendimentos.Any(c => c.cdTriagemAtendimento > last.cdTriagemAtendimento)) atendimentos.Add(last);
+
+            return atendimentos;
         }
 
         public RelationEpisode CreateRelation(RelationEpisode relationEpisode)
@@ -27,6 +38,15 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.PostgreMV
         public void CreateRelation(RelationTriage triage)
         {
             _context.relationTriage.Add(triage);
+            _context.SaveChanges();
+        }
+
+        public void UpdateRelation(RelationEpisode relationEpisode)
+        {
+            var relation = _context.relationEpisode.Where(c => c.cdTriagemAtendimento == relationEpisode.cdTriagemAtendimento).FirstOrDefault();
+            relation.idEpisode = relationEpisode.idEpisode;
+            relation.cdAtendimento = relationEpisode.cdAtendimento;
+            _context.relationEpisode.Update(relation);
             _context.SaveChanges();
         }
 

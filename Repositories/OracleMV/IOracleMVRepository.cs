@@ -24,6 +24,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
         public void InsertTriaAtndHisItColSinVit(decimal cdTriagemAtendimentoHist, decimal cdColetaSinalVital, decimal cdSinalVital);
         public void CallPaciente(ListVariableStruct variables, PanelCallWebhookStruct panelCall, RelationEpisode relationEpisode);
         public TriagemAtendimento? ReadLastTicket(List<decimal> filas, RelationEpisode? cdTriagemAtendimento = null);
+        public TriagemAtendimento? ReadNextTicket(List<decimal> listTriagemAtendimento);
         public void DeleteAtendimentoTriagem(decimal cdTriagemAtendimento);
         public void ValidateGravityConfig(ListVariableStruct variables, int idGravity);
     }

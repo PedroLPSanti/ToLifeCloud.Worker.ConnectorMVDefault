@@ -22,7 +22,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.PostgreMV
         public long idRelationEpisode { get; set; }
 
         [Column("id_episode")]
-        public long idEpisode { get; set; }
+        public long? idEpisode { get; set; }
 
         [Column("cd_triagem_atendimento")]
         public decimal cdTriagemAtendimento { get; set; }

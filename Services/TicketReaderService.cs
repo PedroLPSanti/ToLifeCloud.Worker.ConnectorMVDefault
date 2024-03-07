@@ -39,7 +39,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
             //_billingDataRepository = new BillingDataRepository(_appSettings);
         }
 
-        public void Process()
+        public bool Process()
         {
             LogBatchResponse logBatchResponse = null;
             try
@@ -50,23 +50,53 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                     IPostgreMVRepository postgreRepository = scope.ServiceProvider.GetRequiredService<IPostgreMVRepository>();
                     ListVariableStruct variables = postgreRepository.GetRelationConfig();
 
-                    if (!variables.hasValues()) return;
+                    if (!variables.hasValues()) return true;
 
-                    var lastTicket = postgreRepository.getLastTicket();
+                    var ListLastTicket = postgreRepository.getLastTicket();
 
-                    List<decimal> todasFilas = new List<decimal>();
+                    var listIncomplete = ListLastTicket.Where(x => !x.cdAtendimento.HasValue).Select(c => c.cdTriagemAtendimento).ToList();
 
-                    var filas = variables.getListVariable(VariableTypeEnum.filas_classificacao);
+                    TriagemAtendimento? ticket = null;
+                    var isNew = true;
+                    if (listIncomplete?.Any() ?? false)
+                    {
+                        ticket = oracleRepository.ReadNextTicket(listIncomplete);
+                        isNew = false;
+                    }
 
-                    todasFilas = filas.Select(x => decimal.Parse(x.variableIntegration))?.Distinct()?.ToList();
+                    if (ticket == null)
+                    {
 
-                    if (!(todasFilas?.Any() ?? false)) throw new Exception("Nenhuma fila foi configurada para essa unidade");
+                        List<decimal> todasFilas = new List<decimal>();
 
-                    TriagemAtendimento ticket = oracleRepository.ReadLastTicket(todasFilas, lastTicket);
+                        var filas = variables.getListVariable(VariableTypeEnum.filas_classificacao);
 
-                    if (ticket == null) return;
+                        todasFilas = filas.Select(x => decimal.Parse(x.variableIntegration))?.Distinct()?.ToList();
 
-                    SendToCelerus(oracleRepository, postgreRepository, variables, ticket);
+                        if (!(todasFilas?.Any() ?? false)) throw new Exception("Nenhuma fila foi configurada para essa unidade");
+
+                        var lastTicket = ListLastTicket.FirstOrDefault(c => c.cdAtendimento.HasValue);
+
+                        ticket = oracleRepository.ReadLastTicket(todasFilas, lastTicket);
+                    }
+
+                    if (ticket == null) return false;
+
+                    if (ticket.cdAtendimento.HasValue)
+                    {
+                        SendToCelerus(oracleRepository, postgreRepository, variables, ticket, isNew);
+                        return true;
+                    }
+                    else
+                    {
+                        postgreRepository.CreateRelation(new RelationEpisode
+                        {
+                            datetimeInclusion = DateTime.UtcNow,
+                            cdTriagemAtendimento = ticket.cdTriagemAtendimento,
+                            isMv = true
+                        });
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -75,10 +105,11 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                 _log.Save(LogTypeEnum.Error, (int)_appSettings.idHealthUnit,
                     $"{MethodBase.GetCurrentMethod().ReflectedType.Name}.{MethodBase.GetCurrentMethod().Name}",
                     null, null, ex);
+                return true;
             }
         }
 
-        private void SendToCelerus(IOracleMVRepository oracleRepository, IPostgreMVRepository postgreRepository, ListVariableStruct variables, TriagemAtendimento ticket)
+        private void SendToCelerus(IOracleMVRepository oracleRepository, IPostgreMVRepository postgreRepository, ListVariableStruct variables, TriagemAtendimento ticket, bool isNew)
         {
             var flow = variables.getVariableTolife<int>(VariableTypeEnum.filas_classificacao, ticket.cdFilaSenha.Value.ToString());
 
@@ -122,15 +153,22 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
             {
                 throw new Exception(result.errorDescription);
             }
-
-            postgreRepository.CreateRelation(new RelationEpisode
+            var releation = new RelationEpisode
             {
                 datetimeInclusion = DateTime.UtcNow,
                 idEpisode = result.idEpisode,
                 cdTriagemAtendimento = ticket.cdTriagemAtendimento,
                 cdAtendimento = ticket.cdAtendimento,
                 isMv = true
-            });
+            };
+            if (isNew)
+            {
+                postgreRepository.CreateRelation(releation);
+            }
+            else
+            {
+                postgreRepository.UpdateRelation(releation);
+            }
         }
     }
 }
