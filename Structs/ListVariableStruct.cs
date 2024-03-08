@@ -16,11 +16,28 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Structs
             return variables?.Any() ?? false;
         }
 
-
-        public IntegrationVariable? getVariableNullable(VariableTypeEnum variableType)
+        public T getVariableNullable<T>(VariableTypeEnum variableType, int variableToLife)
         {
-            var result = variables.Where(c => c.idVariableType == (int)variableType).FirstOrDefault();
-            return result;
+            return getVariableNullable<T>(variableType, variableToLife.ToString());
+        }
+
+        public T getVariableNullable<T>(VariableTypeEnum variableType, string variableToLife)
+        {
+            var t = typeof(T);
+            var result = variables.Where(c => c.idVariableType == (int)variableType && c.variableToLife == variableToLife).FirstOrDefault();
+            if (result == null)
+            {
+                return default;
+            }
+            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                if (string.IsNullOrEmpty(result.variableIntegration))
+                {
+                    return default;
+                }
+                t = Nullable.GetUnderlyingType(t);
+            }
+            return (T)Convert.ChangeType(result.variableIntegration, t);
         }
 
         public T getVariable<T>(VariableTypeEnum variableType)

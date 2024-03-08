@@ -28,7 +28,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
             vlIdade = triageWebhook.patientBirthDate.HasValue ? (int)Math.Floor((DateTime.Now - triageWebhook.patientBirthDate.Value).TotalDays / 365.2425) : null;
             dhPreAtendimentoFim = triageWebhook.endClassification.Value.AddHours(3);
             dsQueixaPrincipal = "Queixa :" + triageWebhook.complaint + "| Discriminador selecionado: " + triageWebhook.discriminator;
-            cdEspecialid = variables.getVariable<decimal?>(VariableTypeEnum.especialid, triageWebhook.idForward.Value);
+            cdEspecialid = variables.getVariableNullable<decimal?>(VariableTypeEnum.especialid, triageWebhook.idForward.Value);
             dsAlergia = triageWebhook.allergy;
             dsObservacao = (triageWebhook.atmosphericAir.HasValue ? (triageWebhook.atmosphericAir.Value ? "Ar atmosférico" : "Em terapia de O2") + " | " : "")
                 + (triageWebhook.heartRateRegular.HasValue ? "Batimentos cardíacos: " + (triageWebhook.heartRateRegular.Value ? "Regular" : "Irregular") + " | " : "") +

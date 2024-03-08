@@ -53,8 +53,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                     if (!variables.hasValues()) return true;
 
                     var ListLastTicket = postgreRepository.getLastTicket();
-
-                    var listIncomplete = ListLastTicket.Where(x => !x.cdAtendimento.HasValue).Select(c => c.cdTriagemAtendimento).ToList();
+                    
+                    var listIncomplete = ListLastTicket?.Where(x => !x.cdAtendimento.HasValue)?.Select(c => c.cdTriagemAtendimento)?.ToList();
 
                     TriagemAtendimento? ticket = null;
                     var isNew = true;
@@ -76,8 +76,10 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                         if (!(todasFilas?.Any() ?? false)) throw new Exception("Nenhuma fila foi configurada para essa unidade");
 
                         var lastTicket = ListLastTicket.FirstOrDefault(c => c.cdAtendimento.HasValue);
+                        if (!(listIncomplete?.Any() ?? false) && lastTicket == null || lastTicket != null) { 
+                            ticket = oracleRepository.ReadLastTicket(todasFilas, lastTicket);
+                        }
 
-                        ticket = oracleRepository.ReadLastTicket(todasFilas, lastTicket);
                     }
 
                     if (ticket == null) return false;

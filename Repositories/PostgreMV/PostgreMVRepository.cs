@@ -21,6 +21,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.PostgreMV
 
             var last = _context.relationEpisode.Where(c => c.isMv && c.cdAtendimento.HasValue).OrderByDescending(c => c.datetimeInclusion).FirstOrDefault();
 
+            if (!(atendimentos?.Any() ?? false) && last == null) return new List<RelationEpisode>();
+
             if (!(atendimentos?.Any() ?? false)) return new List<RelationEpisode> { last };
 
             if (last != null && !atendimentos.Any(c => c.cdTriagemAtendimento > last.cdTriagemAtendimento)) atendimentos.Add(last);

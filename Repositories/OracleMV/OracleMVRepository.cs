@@ -288,6 +288,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
 
             if (episode != null)
                 query = query.Where(c => c.cdTriagemAtendimento > episode.cdTriagemAtendimento);
+            else
+                return query.OrderByDescending(c => c.cdTriagemAtendimento).FirstOrDefault();
 
             return query.OrderBy(c => c.cdTriagemAtendimento).FirstOrDefault();
         }
