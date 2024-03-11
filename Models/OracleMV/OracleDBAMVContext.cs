@@ -11,8 +11,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
 
             base.OnModelCreating(modelBuilder.HasDefaultSchema("DBAMV")
                 .Entity<ItColetaSinalVital>(c => c.HasKey(o => new { o.cdColetaSinalVital, o.cdSinalVital }))
-                .Entity<TriaAtndHisItColSinVit>(c => c.HasKey(o => new { o.cdTriagemAtendimentoHist, o.cdColetaSinalVital, o.cdSinalVital })));
-
+                .Entity<TriaAtndHisItColSinVit>(c => c.HasKey(o => new { o.cdTriagemAtendimentoHist, o.cdColetaSinalVital, o.cdSinalVital }))
+                .Entity<TriagAtendimeHistPaguAval>(c => c.HasKey(o => new { o.cdTriagemAtendimentoHist, o.cdAvaliacao })));
         }
 
         public OracleDBAMVContext(DbContextOptions<OracleDBAMVContext> options) : base(options)
@@ -53,5 +53,6 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
         public DbSet<SacrCorReferencia> sacrCorReferencia { get; set; }
 
         public DbSet<SacrProtocoloMultiEmpresa> sacrProtocoloMultiEmpresa { get; set; }
+        public DbSet<TriagAtendimeHistPaguAval> triagAtendimeHistPaguAval { get; set; }
     }
 }

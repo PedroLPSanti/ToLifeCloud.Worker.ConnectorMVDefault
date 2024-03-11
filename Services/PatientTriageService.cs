@@ -143,8 +143,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                         if (webhookRequest.body.glucose.HasValue)
                             listSinalVital.Add(SaveItColetaSinalVital(oracleMVRepository, VariableTypeEnum.sinal_vital_glicose, variables, coletaSinal, webhookRequest.body.glucose.Value));
                     }
+                    decimal? cdAvaliacao = null;
                     if (webhookRequest.body.glasgow.HasValue)
-                        oracleMVRepository.InsertPaguAvaliacao(new PaguAvaliacao(webhookRequest.body, triagemAtendimento.cdTriagemAtendimento, variables, VariableTypeEnum.sinal_vital_glasgow, webhookRequest.body.glasgow.Value));
+                        cdAvaliacao = oracleMVRepository.InsertPaguAvaliacao(new PaguAvaliacao(webhookRequest.body, triagemAtendimento.cdTriagemAtendimento, variables, VariableTypeEnum.sinal_vital_glasgow, webhookRequest.body.glasgow.Value));
 
 
                     oracleMVRepository.InsertClassificacaoRisco(new SacrClassificacaoRisco(triagemAtendimento));
@@ -168,6 +169,9 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                         {
                             oracleMVRepository.InsertTriaAtndHisItColSinVit(cdTriagemHist, coletaSinal.cdColetaSinalVital, c);
                         });
+
+                    if (webhookRequest.body.glasgow.HasValue && cdAvaliacao.HasValue)
+                        oracleMVRepository.InsertTriagAtendimeHistPaguAval(cdTriagemHist, cdAvaliacao.Value);
 
                     postgreRepository.CreateRelation(new RelationTriage(episodeRelation.idRelationEpisode, webhookRequest.body.idTriage, coletaSinal.cdColetaSinalVital));
                 }

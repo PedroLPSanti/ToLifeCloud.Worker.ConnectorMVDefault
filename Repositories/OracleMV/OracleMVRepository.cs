@@ -186,7 +186,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             _contextDBAMV.SaveChanges();
         }
 
-        public void InsertPaguAvaliacao(PaguAvaliacao paguAvaliacao)
+        public decimal InsertPaguAvaliacao(PaguAvaliacao paguAvaliacao)
         {
             var id = GetId("PAGU_AVALIACAO");
 
@@ -195,6 +195,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
             _contextDBAMV.paguAvaliacao.Add(paguAvaliacao);
 
             _contextDBAMV.SaveChanges();
+
+            return id;
         }
 
         public void InsertColetaSinalVital(ItColetaSinalVital itColetaSinalVital)
@@ -277,6 +279,16 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
                 cdSinalVital = cdSinalVital
             });
 
+            _contextDBAMV.SaveChanges();
+        }
+
+        public void InsertTriagAtendimeHistPaguAval(decimal cdTriagemAtendimentoHist, decimal cdAvaliacao)
+        {
+            _contextDBAMV.triagAtendimeHistPaguAval.Add(new TriagAtendimeHistPaguAval
+            {
+                cdTriagemAtendimentoHist = cdTriagemAtendimentoHist,
+                cdAvaliacao = cdAvaliacao
+            });
             _contextDBAMV.SaveChanges();
         }
 

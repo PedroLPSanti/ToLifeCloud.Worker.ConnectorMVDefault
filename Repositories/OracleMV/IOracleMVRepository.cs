@@ -13,7 +13,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
         public ColetaSinalVital InsertColetaSinalVital(ColetaSinalVital coletaSinalVital);
         public void InsertColetaSinalVital(ItColetaSinalVital itColetaSinalVital);
         public Usuarios? GetUserByCpf(string cpf);
-        public void InsertPaguAvaliacao(PaguAvaliacao paguAvaliacao);
+        public decimal InsertPaguAvaliacao(PaguAvaliacao paguAvaliacao);
         public SinalVitalStruct GetSinalVital(decimal cdSinalVital);
         public Paciente? GetPacienteByCpf(decimal cdMultiEmpresa, string? cpf = null, string? cns = null);
         public Paciente GetPacienteById(decimal cdPaciente);
@@ -22,6 +22,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
         public void InsertTempoProcesso(SacrTempoProcesso sacrTempoProcesso);
         public decimal InsertTriagemAtendimentoHist(TriagemAtendimentoHist triagemAtendimentoHist);
         public void InsertTriaAtndHisItColSinVit(decimal cdTriagemAtendimentoHist, decimal cdColetaSinalVital, decimal cdSinalVital);
+
+        public void InsertTriagAtendimeHistPaguAval(decimal cdTriagemAtendimentoHist, decimal cdAvaliacao);
         public void CallPaciente(ListVariableStruct variables, PanelCallWebhookStruct panelCall, RelationEpisode relationEpisode);
         public TriagemAtendimento? ReadLastTicket(List<decimal> filas, RelationEpisode? cdTriagemAtendimento = null);
         public TriagemAtendimento? ReadNextTicket(List<decimal> listTriagemAtendimento);
