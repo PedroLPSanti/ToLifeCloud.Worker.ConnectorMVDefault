@@ -128,7 +128,42 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.OracleMV
 
         public void UpdateTriage(TriagemAtendimento triagemAtendimento)
         {
-            _contextDBAMV.triagemAtendimento.Update(triagemAtendimento);
+            var oldAtendimento = _contextDBAMV.triagemAtendimento.Where(c => c.cdTriagemAtendimento == triagemAtendimento.cdTriagemAtendimento).FirstOrDefault();
+
+            oldAtendimento.cdTriagemAtendimento = triagemAtendimento.cdTriagemAtendimento;
+            oldAtendimento.dhPreAtendimento = triagemAtendimento.dhPreAtendimento;
+            oldAtendimento.cdAtendimento = triagemAtendimento.cdAtendimento.HasValue ? triagemAtendimento.cdAtendimento : oldAtendimento.cdAtendimento;
+            oldAtendimento.cdPaciente = triagemAtendimento.cdPaciente.HasValue ? triagemAtendimento.cdPaciente : oldAtendimento.cdPaciente;
+            oldAtendimento.nmPaciente = !string.IsNullOrEmpty(triagemAtendimento.nmPaciente) ? triagemAtendimento.nmPaciente : oldAtendimento.nmPaciente;
+            oldAtendimento.dtNascimento = triagemAtendimento.dtNascimento.HasValue ? triagemAtendimento.dtNascimento : oldAtendimento.dtNascimento;
+            oldAtendimento.tpSexo = triagemAtendimento.tpSexo.HasValue ? triagemAtendimento.tpSexo : oldAtendimento.tpSexo;
+            oldAtendimento.cdCorReferencia = triagemAtendimento.cdCorReferencia.HasValue ? triagemAtendimento.cdCorReferencia : oldAtendimento.cdCorReferencia;
+            oldAtendimento.cdSintomaAvaliacao = triagemAtendimento.cdSintomaAvaliacao.HasValue ? triagemAtendimento.cdSintomaAvaliacao : oldAtendimento.cdSintomaAvaliacao;
+            oldAtendimento.cdClassificacao = triagemAtendimento.cdClassificacao.HasValue ? triagemAtendimento.cdClassificacao : oldAtendimento.cdClassificacao;
+            oldAtendimento.cdMultiEmpresa = triagemAtendimento.cdMultiEmpresa;
+            oldAtendimento.vlIdade = triagemAtendimento.vlIdade.HasValue ? triagemAtendimento.vlIdade : oldAtendimento.vlIdade;
+            oldAtendimento.dhPreAtendimentoFim = triagemAtendimento.dhPreAtendimentoFim.HasValue ? triagemAtendimento.dhPreAtendimentoFim : oldAtendimento.dhPreAtendimentoFim;
+            oldAtendimento.dhRemovido = triagemAtendimento.dhRemovido.HasValue ? triagemAtendimento.dhRemovido : oldAtendimento.dhRemovido;
+            oldAtendimento.dsQueixaPrincipal = !string.IsNullOrEmpty(triagemAtendimento.dsQueixaPrincipal) ? triagemAtendimento.dsQueixaPrincipal : oldAtendimento.dsQueixaPrincipal;
+            oldAtendimento.cdEspecialid = triagemAtendimento.cdEspecialid.HasValue ? triagemAtendimento.cdEspecialid : oldAtendimento.cdEspecialid;
+            oldAtendimento.dsAlergia = !string.IsNullOrEmpty(triagemAtendimento.dsAlergia) ? triagemAtendimento.dsAlergia : oldAtendimento.dsAlergia;
+            oldAtendimento.dsObservacao = !string.IsNullOrEmpty(triagemAtendimento.dsObservacao) ? triagemAtendimento.dsObservacao : oldAtendimento.dsObservacao;
+            oldAtendimento.dsSenha = !string.IsNullOrEmpty(triagemAtendimento.dsSenha) ? triagemAtendimento.dsSenha : oldAtendimento.dsSenha;
+            oldAtendimento.cdUsuario = !string.IsNullOrEmpty(triagemAtendimento.cdUsuario) ? triagemAtendimento.cdUsuario : oldAtendimento.cdUsuario;
+            oldAtendimento.nmUsuarioTriagem = !string.IsNullOrEmpty(triagemAtendimento.nmUsuarioTriagem) ? triagemAtendimento.nmUsuarioTriagem : oldAtendimento.nmUsuarioTriagem;
+            oldAtendimento.vlEscore = triagemAtendimento.vlEscore.HasValue ? triagemAtendimento.vlEscore : oldAtendimento.vlEscore;
+            oldAtendimento.tpClassificacao = !string.IsNullOrEmpty(triagemAtendimento.tpClassificacao) ? triagemAtendimento.tpClassificacao : oldAtendimento.tpClassificacao;
+            oldAtendimento.cdFilaSenha = triagemAtendimento.cdFilaSenha.HasValue ? triagemAtendimento.cdFilaSenha : oldAtendimento.cdFilaSenha;
+            oldAtendimento.snPrioridadeOcto = triagemAtendimento.snPrioridadeOcto.HasValue ? triagemAtendimento.snPrioridadeOcto : oldAtendimento.snPrioridadeOcto;
+            oldAtendimento.snPrioridadeClassificacao = triagemAtendimento.snPrioridadeClassificacao.HasValue ? triagemAtendimento.snPrioridadeClassificacao : oldAtendimento.snPrioridadeClassificacao;
+            oldAtendimento.snPrioridadeEspecial = !string.IsNullOrEmpty(triagemAtendimento.snPrioridadeEspecial) ? triagemAtendimento.snPrioridadeEspecial : oldAtendimento.snPrioridadeEspecial;
+            oldAtendimento.snAtendimentoSocial = !string.IsNullOrEmpty(triagemAtendimento.snAtendimentoSocial) ? triagemAtendimento.snAtendimentoSocial : oldAtendimento.snAtendimentoSocial;
+            oldAtendimento.snConfirmaChamada = !string.IsNullOrEmpty(triagemAtendimento.snConfirmaChamada) ? triagemAtendimento.snConfirmaChamada : oldAtendimento.snConfirmaChamada;
+            oldAtendimento.tpRastreamento = triagemAtendimento.tpRastreamento;
+            oldAtendimento.dhChamadaClassificacao = triagemAtendimento.dhChamadaClassificacao.HasValue ? triagemAtendimento.dhChamadaClassificacao : oldAtendimento.dhChamadaClassificacao;
+            oldAtendimento.qtChamadas = triagemAtendimento.qtChamadas.HasValue ? triagemAtendimento.qtChamadas : oldAtendimento.qtChamadas;
+            oldAtendimento.dsObservacaoRemovido = !string.IsNullOrEmpty(triagemAtendimento.dsObservacaoRemovido) ? triagemAtendimento.dsObservacaoRemovido : oldAtendimento.dsObservacaoRemovido;
+            _contextDBAMV.triagemAtendimento.Update(oldAtendimento);
             _contextDBAMV.SaveChanges();
         }
 

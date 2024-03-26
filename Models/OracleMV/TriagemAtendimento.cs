@@ -30,8 +30,8 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Models.OracleMV
             dsQueixaPrincipal = "Queixa :" + triageWebhook.complaint + "| Discriminador selecionado: " + triageWebhook.discriminator;
             cdEspecialid = variables.getVariableNullable<decimal?>(VariableTypeEnum.especialid, triageWebhook.idForward.Value);
             dsAlergia = triageWebhook.allergy;
-            dsObservacao = (triageWebhook.atmosphericAir.HasValue ? (triageWebhook.atmosphericAir.Value ? "Ar atmosférico" : "Em terapia de O2") + " | " : "")
-                + (triageWebhook.heartRateRegular.HasValue ? "Batimentos cardíacos: " + (triageWebhook.heartRateRegular.Value ? "Regular" : "Irregular") + " | " : "") +
+            dsObservacao = (triageWebhook.saturation.HasValue ? (triageWebhook.atmosphericAir.Value ? "Ar atmosférico" : "Em terapia de O2") + " | " : "")
+                + (triageWebhook.heartRate.HasValue ? "Batimentos cardíacos: " + (triageWebhook.heartRateRegular.Value ? "Regular" : "Irregular") + " | " : "") +
                 (!string.IsNullOrEmpty(triageWebhook.diseaseHistory) ? "Histórico de doenças:" + triageWebhook.diseaseHistory + " | " : "")
                  + (triageWebhook.fallRisk.HasValue ? "Risco de queda: " + (triageWebhook.fallRisk.Value ? "Sim" : "Não") + " | " : "")
                  + (triageWebhook.idSuspicion.HasValue ? "Suspeita: " + (Util.GetSuspicion(triageWebhook.idSuspicion.Value)) + " | " : "")

@@ -15,11 +15,11 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault.Repositories.PostgreMV
 
         public List<RelationEpisode> getLastTicket()
         {
-            var todayLimits = DateTime.UtcNow.AddHours(-12);
+            var todayLimits = DateTime.UtcNow.AddHours(-5);
 
             var atendimentos = _context.relationEpisode.Where(c => c.isMv && !c.cdAtendimento.HasValue && c.datetimeInclusion >= todayLimits).OrderBy(c => c.datetimeInclusion).ToList();
 
-            var last = _context.relationEpisode.Where(c => c.isMv && c.cdAtendimento.HasValue).OrderByDescending(c => c.datetimeInclusion).FirstOrDefault();
+            var last = _context.relationEpisode.Where(c => c.isMv && c.cdAtendimento.HasValue && c.datetimeInclusion >= todayLimits).OrderByDescending(c => c.datetimeInclusion).FirstOrDefault();
 
             if (!(atendimentos?.Any() ?? false) && last == null) return new List<RelationEpisode>();
 

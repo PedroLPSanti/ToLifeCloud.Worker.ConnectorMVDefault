@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -53,7 +54,7 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                     if (!variables.hasValues()) return true;
 
                     var ListLastTicket = postgreRepository.getLastTicket();
-                    
+
                     var listIncomplete = ListLastTicket?.Where(x => !x.cdAtendimento.HasValue)?.Select(c => c.cdTriagemAtendimento)?.ToList();
 
                     TriagemAtendimento? ticket = null;
@@ -76,10 +77,16 @@ namespace ToLifeCloud.Worker.ConnectorMVDefault
                         if (!(todasFilas?.Any() ?? false)) throw new Exception("Nenhuma fila foi configurada para essa unidade");
 
                         var lastTicket = ListLastTicket.FirstOrDefault(c => c.cdAtendimento.HasValue);
-                        if (!(listIncomplete?.Any() ?? false) && lastTicket == null || lastTicket != null) { 
+                        if (!(listIncomplete?.Any() ?? false) && lastTicket == null || lastTicket != null)
+                        {
                             ticket = oracleRepository.ReadLastTicket(todasFilas, lastTicket);
                         }
-
+                        else
+                        {
+                            lastTicket = ListLastTicket.OrderByDescending(x => x.cdTriagemAtendimento).FirstOrDefault();
+                            ticket = oracleRepository.ReadLastTicket(todasFilas, lastTicket);
+                        }
+                        isNew = true;
                     }
 
                     if (ticket == null) return false;
